@@ -1,0 +1,19 @@
+#!/bin/sh
+
+EXEC_PATH="$PWD/$0"
+UTILS_DIR=$(dirname $EXEC_PATH) 
+SOURCE_DIR="$UTILS_DIR/.."
+PROJECT_DIR="$SOURCE_DIR/.."
+BUILD_DIR="$PROJECT_DIR/build"
+
+echo "mkdir -p $BUILD_DIR"
+mkdir -p $BUILD_DIR
+
+pushd "$BUILD_DIR"
+echo "cmake $SOURCE_DIR"
+cmake -G Ninja "$SOURCE_DIR"
+echo "cmake --build $BUILD_DIR"
+cmake --build "$BUILD_DIR"
+popd
+
+exit 0
