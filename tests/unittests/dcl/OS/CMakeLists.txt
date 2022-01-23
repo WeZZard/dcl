@@ -3,15 +3,15 @@ enable_testing()
 include_directories(../../../lib/os)
 
 add_executable(
-  unittests_libdclOS
+  libdclOS_unittests
   FileTests.cpp
 )
 
 target_link_libraries(
-  unittests_libdclOS
+  libdclOS_unittests
   dclOS
   gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(unittests_libdclOS)
+gtest_discover_tests(libdclOS_unittests)
