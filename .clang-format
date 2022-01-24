@@ -1,0 +1,9 @@
+BasedOnStyle: LLVM
+AlwaysBreakTemplateDeclarations: true
+StatementMacros:
+  - DCL_CONSTRUCTOR
+  - DCL_NOINLINE
+  - DCL_ALWAYS_INLINE
+  - DCL_NORETURN
+  - DCL_UNUSED
+  - DCL_ALWAYS_INLINE
