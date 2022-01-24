@@ -1,4 +1,4 @@
-//===--- File.h - Decompiler Components Library -----------------*- C++ -*-===//
+//===--- File.h - File Abstraction Over Variant OSes ------------*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
 //
@@ -15,10 +15,15 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef DCL_OS_FILE_H
+#define DCL_OS_FILE_H
+
 #include <cstdlib>
 #include <cstdint>
 #include <cassert>
 #include <memory>
+
+#include <dcl/Basic/Basic.h>
 
 namespace dcl {
 
@@ -44,19 +49,21 @@ private:
 
 public:
 
-  explicit File(const char * path, uint32_t flags);
+  explicit File(const char * path, uint32_t flags) noexcept;
 
-  ~File();
+  ~File() noexcept;
 
   File(const File&) = delete;
 
   File& operator = (const File&) = delete;
 
-  File(File&& another) {
+  DCL_ALWAYS_INLINE
+  File(File&& another) noexcept {
     * this = std::move(another);
   }
 
-  File& operator = (File&& another) {
+  DCL_ALWAYS_INLINE
+  File& operator = (File&& another) noexcept {
     _buffer = another._buffer;
     another._buffer = nullptr;
     _size = another._size;
@@ -75,27 +82,33 @@ public:
 
 public:
 
-  void * getBytes() {
+  DCL_ALWAYS_INLINE
+  void * getBytes() noexcept {
     return _buffer;
   }
 
-  const void * getBytes() const {
+  DCL_ALWAYS_INLINE
+  const void * getBytes() const noexcept {
     return _buffer;
   }
 
-  size_t getSize() {
+  DCL_ALWAYS_INLINE
+  size_t getSize() noexcept {
     return _size;
   }
 
-  size_t getSize() const {
+  DCL_ALWAYS_INLINE
+  size_t getSize() const noexcept {
     return _size;
   }
 
-  int getFd() {
+  DCL_ALWAYS_INLINE
+  int getFd() noexcept {
     return _fd;
   }
 
-  int getFd() const {
+  DCL_ALWAYS_INLINE
+  int getFd() const noexcept {
     return _fd;
   }
 
@@ -104,3 +117,5 @@ public:
 } // namespace dcl::OS
 
 } // namespace dcl
+
+#endif // DCL_OS_FILE_H

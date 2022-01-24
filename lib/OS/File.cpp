@@ -13,7 +13,8 @@ namespace OS {
 
 namespace {
 
-static int makeProt(uint32_t flags) {
+DCL_ALWAYS_INLINE
+static int makeProt(uint32_t flags) noexcept {
   int prot = 0;
 
   if (flags == O_RDONLY) {
@@ -32,7 +33,7 @@ static int makeProt(uint32_t flags) {
 } // anonymous namespace
 
 
-File::File(const char * path, uint32_t flags) {
+File::File(const char * path, uint32_t flags) noexcept {
   int fd = open(path, flags, nullptr);
   
 #if DEBUG
@@ -60,7 +61,7 @@ File::File(const char * path, uint32_t flags) {
   _buffer = header;
 }
 
-File::~File() {
+File::~File() noexcept {
   if (!_buffer) {
     assert(_fd == -1);
     return;
