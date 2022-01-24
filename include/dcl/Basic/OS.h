@@ -1,4 +1,4 @@
-//===--- Basic.h - Basic Definitions and Configurations ---------*- C++ -*-===//
+//===--- OS.h - Configurations for Variant OSes -----------------*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
 //
@@ -11,12 +11,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_BASIC_BASIC_H
-#define DCL_BASIC_BASIC_H
+#ifndef DCL_BASIC_OS_H
+#define DCL_BASIC_OS_H
 
-#include <dcl/Basic/Compilers.h>
-#include <dcl/Basic/OS.h>
-#include <dcl/Basic/RuntimeAssertions.h>
-#include <dcl/Basic/MetaMacros.h>
+#define DCL_TARGET_OS_DARWIN    __MACH__
 
-#endif // DCL_BASIC_BASIC_H
+#endif // DCL_BASIC_OS_H

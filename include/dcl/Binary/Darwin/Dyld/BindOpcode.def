@@ -1,0 +1,86 @@
+//===--- BindOpcode.h - Dyld Bind Opcode Meta-Programming -------*- C++ -*-===//
+//
+// This source file is part of the DCL open source project
+//
+// Copyright (c) 2022 Li Yu-Long and the DCL project authors
+// Licensed under Apache 2.0 License
+//
+// See https://github.com/dcl-project/dcl/LICENSE.txt for license information
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
+// DCL project authors
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef DYLD_BIND_OPCODE
+#define DYLD_BIND_OPCODE(CASE_NAME, CONSTANT, DESCRIPTION, ITERATE_ACTION, ...)
+#endif
+
+#ifndef DYLD_CONSUME
+#define DYLD_CONSUME
+#endif
+
+#ifndef DYLD_CONSUME_ULEB
+#define DYLD_CONSUME_ULEB
+#endif
+
+#ifndef DYLD_CONSUME_SLEB
+#define DYLD_CONSUME_SLEB
+#endif
+
+#ifndef DYLD_CONSUME_NULL_TERMINATED_STRING
+#define DYLD_CONSUME_NULL_TERMINATED_STRING
+#endif
+
+#ifndef DYLD_CONSUME_SUB_OPCODE
+#define DYLD_CONSUME_SUB_OPCODE
+#endif
+
+#if !__has_include(<mach-o/loader.h>)
+#include <mach-o/loader.h>
+#endif
+
+DYLD_BIND_OPCODE(Done, BIND_OPCODE_DONE, "Done", DYLD_CONSUME)
+DYLD_BIND_OPCODE(SetDylibOrdinalWithImmediate,
+                 BIND_OPCODE_SET_DYLIB_ORDINAL_IMM,
+                 "Set dylib ordinal with immediate", DYLD_CONSUME)
+DYLD_BIND_OPCODE(SetDylibOrdinalWithUleb, BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB,
+                 "Set dylib ordinal with uleb", DYLD_CONSUME, DYLD_CONSUME_ULEB)
+DYLD_BIND_OPCODE(SetDylibOrdinalWithNegativeImmediate,
+                 BIND_OPCODE_SET_DYLIB_SPECIAL_IMM,
+                 "Set dylib ordinal with negative immediate", DYLD_CONSUME,
+                 DYLD_CONSUME)
+DYLD_BIND_OPCODE(SetSymbolTrailingFlagsWithImmediate,
+                 BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM,
+                 "Set symbol trailing flags with immediate", DYLD_CONSUME,
+                 DYLD_CONSUME_NULL_TERMINATED_STRING)
+DYLD_BIND_OPCODE(SetTypeWithImmediate, BIND_OPCODE_SET_TYPE_IMM,
+                 "Set type with immediate", DYLD_CONSUME)
+DYLD_BIND_OPCODE(SetAddendWithSleb, BIND_OPCODE_SET_ADDEND_SLEB,
+                 "Set addend with sleb", DYLD_CONSUME, DYLD_CONSUME_SLEB)
+DYLD_BIND_OPCODE(SetSegmentAndOffsetUleb,
+                 BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB,
+                 "Set segment and offset with uleb", DYLD_CONSUME,
+                 DYLD_CONSUME_ULEB)
+DYLD_BIND_OPCODE(AddAddressUleb, BIND_OPCODE_ADD_ADDR_ULEB,
+                 "Add Address with uleb", DYLD_CONSUME, DYLD_CONSUME_ULEB)
+DYLD_BIND_OPCODE(DoBind, BIND_OPCODE_DO_BIND, "Do bind", DYLD_CONSUME)
+DYLD_BIND_OPCODE(DoBindAddAddressUleb, BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB,
+                 "Do bind and add address uleb", DYLD_CONSUME,
+                 DYLD_CONSUME_ULEB)
+DYLD_BIND_OPCODE(DoBindAddAddressImmediateScaled,
+                 BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED,
+                 "Do bind and add address with an immediate and scaled",
+                 DYLD_CONSUME)
+DYLD_BIND_OPCODE(DoBindUlebTimesSkippingUleb,
+                 BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB,
+                 "Do bind with uleb and times skipping uleb", DYLD_CONSUME,
+                 DYLD_CONSUME_ULEB, DYLD_CONSUME_ULEB)
+DYLD_BIND_OPCODE(Threaded, BIND_OPCODE_THREADED, "Threaded binding",
+                 DYLD_CONSUME, DYLD_CONSUME_SUB_OPCODE)
+
+#undef DYLD_BIND_OPCODE
+#undef DYLD_CONSUME
+#undef DYLD_CONSUME_ULEB
+#undef DYLD_CONSUME_SLEB
+#undef DYLD_CONSUME_NULL_TERMINATED_STRING
+#undef DYLD_CONSUME_SUB_OPCODE

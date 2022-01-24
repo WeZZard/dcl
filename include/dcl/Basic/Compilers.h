@@ -9,7 +9,7 @@
 // See https://github.com/dcl-project/dcl/graphs/contributors for the list of 
 // DCL project authors
 //
-//===----------------------------------------------------------------------===//`
+//===----------------------------------------------------------------------===//
 
 #ifndef DCL_BASIC_COMPILERS_H
 #define DCL_BASIC_COMPILERS_H
@@ -61,7 +61,7 @@
 #if __has_attribute(noinline) || DCL_GNUC_PREREQ(3, 4, 0)
 #define DCL_NOINLINE __attribute__((noinline))
 #elif defined(_MSC_VER)
-#define DCL_NOINLINE __declspec(noinline)
+#define DCL_NOINLINE __DEClspec(noinline)
 #else
 #define DCL_NOINLINE
 #endif
@@ -81,7 +81,7 @@
 #ifdef __GNUC__
 #define DCL_NORETURN __attribute__((noreturn))
 #elif defined(_MSC_VER)
-#define DCL_NORETURN __declspec(noreturn)
+#define DCL_NORETURN __DEClspec(noreturn)
 #else
 #define DCL_NORETURN
 #endif
@@ -100,7 +100,7 @@
 //       // ... do each thing
 //       DCL_ASSERT_ONLY(--verifyCount);
 //     } while (!done());
-//     assert(verifyCount == 0 && "did not do everything");
+//     DCLAssert(verifyCount == 0 && "did not do everything");
 //   }
 // };
 #ifdef NDEBUG
@@ -144,5 +144,20 @@
 #define DCL_ASM_LABEL_RAW(STRING) __asm__(STRING)
 #define DCL_ASM_LABEL_WITH_PREFIX(STRING) \
   DCL_ASM_LABEL_RAW(DCL_SYMBOL_PREFIX_STRING STRING)
-  
+
+#define DCL_UNUSED __attribute__((unused))
+
+#if __cplusplus
+#define DCL_CONSTEXPR constexpr
+#else
+#define DCL_CONSTEXPR
+#endif
+
+#define DCL_PRINTF_LIKE(FORMAT_ARG, FIRST_VAR_ARG)                             \
+  __attribute__((__format__(__printf__, FORMAT_ARG, FIRST_VAR_ARG)))
+#define DCL_PRINTF0_LIKE(FORMAT_ARG, FIRST_VAR_ARG)                            \
+  __attribute__((__format__(__printf0__, FORMAT_ARG, FIRST_VAR_ARG)))
+#define DCL_SCANF0_LIKE(FORMAT_ARG, FIRST_VAR_ARG)                             \
+  __attribute__((__format__(__scanf__, FORMAT_ARG, FIRST_VAR_ARG)))
+
 #endif // DCL_BASIC_COMPILERS_H

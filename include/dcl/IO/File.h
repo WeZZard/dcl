@@ -1,4 +1,4 @@
-//===--- File.h - File Abstraction Over Variant OSes ------------*- C++ -*-===//
+//===--- File.h - File Abstraction over Variant OSes ------------*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
 //
@@ -6,40 +6,32 @@
 // Licensed under Apache 2.0 License
 //
 // See https://github.com/dcl-project/dcl/LICENSE.txt for license information
-// See https://github.com/dcl-project/dcl/graphs/contributors for the list of 
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
 // DCL project authors
 //
 //===----------------------------------------------------------------------===//
-//
-//  This file define basic interface of the file abstraction.
-//
-//===----------------------------------------------------------------------===//
 
-#ifndef DCL_OS_FILE_H
-#define DCL_OS_FILE_H
+#ifndef DCL_IO_FILE_H
+#define DCL_IO_FILE_H
 
-#include <cstdlib>
 #include <cstdint>
-#include <cassert>
+#include <cstdlib>
 #include <memory>
 
 #include <dcl/Basic/Basic.h>
+#include <dcl/IO/Permissions.h>
 
 namespace dcl {
 
-namespace OS {
+namespace IO {
 
-/**
- * @brief `File` is a move-only resource.
- * 
- */
+/// A move-only resource.
 class File {
 
 private:
-
   int _fd;
 
-  void * _buffer;
+  void *_buffer;
 
   size_t _size;
 
@@ -48,22 +40,19 @@ private:
 #endif
 
 public:
-
-  explicit File(const char * path, uint32_t flags) noexcept;
+  explicit File(const char *path, Permissions permissions) noexcept;
 
   ~File() noexcept;
 
-  File(const File&) = delete;
+  File(const File &) = delete;
 
-  File& operator = (const File&) = delete;
-
-  DCL_ALWAYS_INLINE
-  File(File&& another) noexcept {
-    * this = std::move(another);
-  }
+  File &operator=(const File &) = delete;
 
   DCL_ALWAYS_INLINE
-  File& operator = (File&& another) noexcept {
+  File(File &&another) noexcept { *this = std::move(another); }
+
+  DCL_ALWAYS_INLINE
+  File &operator=(File &&another) noexcept {
     _buffer = another._buffer;
     another._buffer = nullptr;
     _size = another._size;
@@ -81,41 +70,35 @@ public:
 #pragma mark - Accessing File Contents
 
 public:
+  DCL_ALWAYS_INLINE
+  void *getBytes() noexcept { return _buffer; }
 
   DCL_ALWAYS_INLINE
-  void * getBytes() noexcept {
-    return _buffer;
-  }
+  const void *getBytes() const noexcept { return _buffer; }
 
   DCL_ALWAYS_INLINE
-  const void * getBytes() const noexcept {
-    return _buffer;
-  }
+  size_t getSize() noexcept { return _size; }
 
   DCL_ALWAYS_INLINE
-  size_t getSize() noexcept {
-    return _size;
-  }
+  size_t getSize() const noexcept { return _size; }
 
   DCL_ALWAYS_INLINE
-  size_t getSize() const noexcept {
-    return _size;
-  }
+  int getFd() noexcept { return _fd; }
 
   DCL_ALWAYS_INLINE
-  int getFd() noexcept {
-    return _fd;
-  }
+  int getFd() const noexcept { return _fd; }
+
+#if DEBUG
+  DCL_ALWAYS_INLINE
+  const char * getPath() noexcept { return _path; }
 
   DCL_ALWAYS_INLINE
-  int getFd() const noexcept {
-    return _fd;
-  }
-
+  const char * const getPath() const noexcept { return _path; }
+#endif
 };
 
-} // namespace dcl::OS
+} // namespace IO
 
 } // namespace dcl
 
-#endif // DCL_OS_FILE_H
+#endif // DCL_IO_FILE_H
