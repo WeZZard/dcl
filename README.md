@@ -1,8 +1,14 @@
 # Decompiler Components Library
 
-DCL is short for Decompiler Components Library, which inspired by the
-abbreviation of Borland Visual Components Library -- one of my favorite C++
-visual programming library in my childhood.
+DCL is short for Decompiler Components Library.
+
+This project is aimed to offer basic infrastructure of a decompiler-like
+software.
+
+## Supported Platform and Languages
+
+Currently, Darwina (macOS, iOS, tvOS and watchOS) and Swift is planned to
+support.
 
 ## Project Structure
 
