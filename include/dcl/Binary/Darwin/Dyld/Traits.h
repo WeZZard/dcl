@@ -21,29 +21,23 @@
 #include <cstddef>
 #include <mach-o/fixup-chains.h>
 
-namespace dcl {
-
-namespace Binary {
-
-namespace Darwin {
-
-namespace Dyld {
+namespace dcl::Binary::Darwin::Dyld {
 
 #pragma mark - Chained-Fixups Import Format Traits
 
-template<typename ByteOrder>
+template <typename ByteOrder>
 class ChainedImport;
 
-template<typename ByteOrder>
+template <typename ByteOrder>
 class ChainedImportAddend;
 
-template<typename ByteOrder>
+template <typename ByteOrder>
 class ChainedImportAddend64;
 
 template <typename Format>
 class ChainedImportTraits {};
 
-template<typename ByteOrder>
+template <typename ByteOrder>
 class ChainedImportTraits<ChainedImport<ByteOrder>> {
 public:
   using UnderlyingTy = dyld_chained_import;
@@ -51,7 +45,7 @@ public:
   static size_t Stride = sizeof(UnderlyingTy);
 };
 
-template<typename ByteOrder>
+template <typename ByteOrder>
 class ChainedImportTraits<ChainedImportAddend<ByteOrder>> {
 public:
   using UnderlyingTy = dyld_chained_import_addend;
@@ -59,7 +53,7 @@ public:
   static size_t Stride = sizeof(UnderlyingTy);
 };
 
-template<typename ByteOrder>
+template <typename ByteOrder>
 class ChainedImportTraits<ChainedImportAddend64<ByteOrder>> {
 public:
   using UnderlyingTy = dyld_chained_import_addend64;
@@ -140,14 +134,8 @@ public:
   using UnderlyingTy = dyld_chained_ptr_arm64e_auth_rebase;
 };
 
-} // namespace Dyld
-
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin::Dyld
 
 #endif // DCL_TARGET_OS_DARWIN
 
-#endif // DCL_BINARY_DARWIN_TRAITS_H
+#endif // DCL_BINARY_DARWIN_DYLD_TRAITS_H

@@ -6,7 +6,7 @@
 // Licensed under Apache 2.0 License
 //
 // See https://github.com/dcl-project/dcl/LICENSE.txt for license information
-// See https://github.com/dcl-project/dcl/graphs/contributors for the list of 
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
 // DCL project authors
 //
 //===----------------------------------------------------------------------===//
@@ -15,8 +15,8 @@
 #define DCL_BASIC_BASIC_H
 
 #include <dcl/Basic/Compilers.h>
+#include <dcl/Basic/MetaMacros.h>
 #include <dcl/Basic/OS.h>
 #include <dcl/Basic/RuntimeAssertions.h>
-#include <dcl/Basic/MetaMacros.h>
 
 #endif // DCL_BASIC_BASIC_H

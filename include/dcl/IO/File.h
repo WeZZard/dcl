@@ -31,7 +31,7 @@ class File {
 private:
   int _fd;
 
-  void *_buffer;
+  void * _buffer;
 
   size_t _size;
 
@@ -40,19 +40,19 @@ private:
 #endif
 
 public:
-  explicit File(const char *path, Permissions permissions) noexcept;
+  explicit File(const char * path, Permissions permissions) noexcept;
 
   ~File() noexcept;
 
-  File(const File &) = delete;
+  File(const File&) = delete;
 
-  File &operator=(const File &) = delete;
-
-  DCL_ALWAYS_INLINE
-  File(File &&another) noexcept { *this = std::move(another); }
+  File& operator=(const File&) = delete;
 
   DCL_ALWAYS_INLINE
-  File &operator=(File &&another) noexcept {
+  File(File&& another) noexcept { *this = std::move(another); }
+
+  DCL_ALWAYS_INLINE
+  File& operator=(File&& another) noexcept {
     _buffer = another._buffer;
     another._buffer = nullptr;
     _size = another._size;
@@ -71,10 +71,10 @@ public:
 
 public:
   DCL_ALWAYS_INLINE
-  void *getBytes() noexcept { return _buffer; }
+  void * getBytes() noexcept { return _buffer; }
 
   DCL_ALWAYS_INLINE
-  const void *getBytes() const noexcept { return _buffer; }
+  const void * getBytes() const noexcept { return _buffer; }
 
   DCL_ALWAYS_INLINE
   size_t getSize() noexcept { return _size; }

@@ -11,8 +11,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_BASIC_RUNTIME_ASSERTIONS_H
-#define DCL_BASIC_RUNTIME_ASSERTIONS_H
+#ifndef DCL_BASIC_RUNTIMEASSERTIONS_H
+#define DCL_BASIC_RUNTIMEASSERTIONS_H
 
 #include <dcl/Basic/Compilers.h>
 
@@ -21,35 +21,43 @@
 #pragma mark - Interfaces
 
 /**
- * @brief The assert macro in C standard library occupies the identifier 
+ * @brief The assert macro in C standard library occupies the identifier
  * `assert`. Thus we have the following macro and then foward to dcl::_assert.
- * 
+ *
  */
 #define DCLAssert(...) dcl::_assert(__VA_ARGS__)
 
 namespace dcl {
 
+DCL_ALWAYS_INLINE
+void _assert(
+  bool predicate,
+  bool predicate1,
+  bool predicate2,
+  bool predicate3,
+  bool predicate4);
+
 /**
- * @brief The assert macro in C standard library occupies the identifier 
+ * @brief The assert macro in C standard library occupies the identifier
  * `assert`. Thus this function is named with `_assert`.
- * 
+ *
  */
 DCL_ALWAYS_INLINE
-void _assert(bool predicate, const char *__restrict format, ...)
-    DCL_PRINTF_LIKE(2, 3);
+void _assert(bool predicate, const char * __restrict format, ...)
+  DCL_PRINTF_LIKE(2, 3);
 
 DCL_ALWAYS_INLINE
 void _assert(bool predicate);
 
-void precondition(bool predicate, const char *__restrict format, ...)
-    DCL_PRINTF_LIKE(2, 3);
+void precondition(bool predicate, const char * __restrict format, ...)
+  DCL_PRINTF_LIKE(2, 3);
 
 DCL_NORETURN
-void preconditionFailure(const char *__restrict format, ...)
-    DCL_PRINTF_LIKE(1, 2);
+void preconditionFailure(const char * __restrict format, ...)
+  DCL_PRINTF_LIKE(1, 2);
 
 DCL_NORETURN
-void unreachable(const char *__restrict format, ...) DCL_PRINTF_LIKE(1, 2);
+void unreachable(const char * __restrict format, ...) DCL_PRINTF_LIKE(1, 2);
 
 DCL_NORETURN
 void unreachable();
@@ -59,4 +67,4 @@ void notImplemented();
 
 } // namespace dcl
 
-#endif // DCL_BASIC_RUNTIME_ASSERTIONS_H
+#endif // DCL_BASIC_RUNTIMEASSERTIONS_H

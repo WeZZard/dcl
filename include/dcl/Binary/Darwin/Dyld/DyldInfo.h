@@ -11,8 +11,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_BINARY_DARWIN_DYLD_DYLD_INFO_H
-#define DCL_BINARY_DARWIN_DYLD_DYLD_INFO_H
+#ifndef DCL_BINARY_DARWIN_DYLD_DYLDINFO_H
+#define DCL_BINARY_DARWIN_DYLD_DYLDINFO_H
 
 #include <dcl/Basic/Basic.h>
 
@@ -27,13 +27,7 @@
 
 #include <mach-o/loader.h>
 
-namespace dcl {
-
-namespace Binary {
-
-namespace Darwin {
-
-namespace Dyld {
+namespace dcl::Binary::Darwin::Dyld {
 
 class BindOpcode {
 
@@ -55,16 +49,20 @@ private:
 
 public:
   DCL_ALWAYS_INLINE
-  BindOpcode(uint8_t raw) : _raw(raw) {}
+  explicit BindOpcode(uint8_t raw) : _raw(raw) {}
 
   DCL_ALWAYS_INLINE
   uint8_t getRaw() const { return _raw; }
 
   DCL_ALWAYS_INLINE
-  const uint8_t *getAddress() const { return (uint8_t *)&_raw; }
+  const uint8_t * getAddress() const {
+    return reinterpret_cast<const uint8_t *>(&_raw);
+  }
 
   DCL_ALWAYS_INLINE
-  const uint8_t *getTrailingContentsAddress() const { return getAddress() + 1; }
+  const uint8_t * getTrailingContentsAddress() const {
+    return getAddress() + 1;
+  }
 
   DCL_ALWAYS_INLINE
   Kind getKind() const { return Kind(_raw & BIND_OPCODE_MASK); }
@@ -85,18 +83,18 @@ public:
   using iterator_category = std::forward_iterator_tag;
 
 private:
-  const uint8_t *_begin;
+  const uint8_t * _begin;
 
-  const uint8_t *_address;
+  const uint8_t * _address;
 
-  const uint8_t *_end;
+  const uint8_t * _end;
 
 private:
   DCL_ALWAYS_INLINE
   void advance() {
 
 // Dyld bind opcode consumer
-#define DYLD_CONSUME() (_address += 1)
+#define DYLD_CONSUME()      (_address += 1)
 #define DYLD_CONSUME_ULEB() (readUleb128(_address, _end))
 #define DYLD_CONSUME_SLEB() (readSleb128(_address, _end))
 #define DYLD_CONSUME_NULL_TERMINATED_STRING()                                  \
@@ -140,28 +138,30 @@ private:
 
 public:
   DCL_ALWAYS_INLINE
-  BindOpcodeIterator(const uint8_t *begin, const uint8_t *end)
-      : BindOpcodeIterator(begin, begin, end) {}
+  BindOpcodeIterator(const uint8_t * begin, const uint8_t * end)
+    : BindOpcodeIterator(begin, begin, end) {}
 
   DCL_ALWAYS_INLINE
-  BindOpcodeIterator(const uint8_t *begin, const uint8_t *address,
-                     const uint8_t *end)
-      : _begin(begin), _address(address), _end(end) {}
+  BindOpcodeIterator(
+    const uint8_t * begin,
+    const uint8_t * address,
+    const uint8_t * end)
+    : _begin(begin), _address(address), _end(end) {}
 
   DCL_ALWAYS_INLINE
-  const uint8_t *getBegin() const { return _begin; }
+  const uint8_t * getBegin() const { return _begin; }
 
   DCL_ALWAYS_INLINE
-  const uint8_t *getAddress() const { return _address; }
+  const uint8_t * getAddress() const { return _address; }
 
   DCL_ALWAYS_INLINE
-  const uint8_t *getEnd() const { return _end; }
+  const uint8_t * getEnd() const { return _end; }
 
   DCL_ALWAYS_INLINE
   const ptrdiff_t getOffset() const { return _address - _begin; }
 
   DCL_ALWAYS_INLINE
-  BindOpcodeIterator &operator++() {
+  BindOpcodeIterator& operator++() {
     advance();
     return *this;
   }
@@ -184,27 +184,27 @@ public:
   DCL_ALWAYS_INLINE
   reference operator*() const {
     return *const_cast<BindOpcode *>(
-        reinterpret_cast<const BindOpcode *>(_address));
+      reinterpret_cast<const BindOpcode *>(_address));
   }
 
   DCL_ALWAYS_INLINE
   pointer operator->() const {
     return const_cast<BindOpcode *>(
-        reinterpret_cast<const BindOpcode *>(_address));
+      reinterpret_cast<const BindOpcode *>(_address));
   }
 };
 
 class BindOpcodeStream {
 
 private:
-  const uint8_t *_begin;
+  const uint8_t * _begin;
 
-  const uint8_t *_end;
+  const uint8_t * _end;
 
 public:
   DCL_ALWAYS_INLINE
-  BindOpcodeStream(const uint8_t *begin, const uint8_t *end)
-      : _begin(begin), _end(end) {}
+  BindOpcodeStream(const uint8_t * begin, const uint8_t * end)
+    : _begin(begin), _end(end) {}
 
   using Iterator = BindOpcodeIterator;
   using ConstIterator = typename std::add_const<Iterator>::type;
@@ -228,24 +228,18 @@ public:
   ConstIterator cend() const { return Iterator{_begin, _end, _end}; }
 
   DCL_ALWAYS_INLINE
-  uintptr_t getUleb128(const uint8_t *&begin) const {
+  uintptr_t getUleb128(const uint8_t *& begin) const {
     return readUleb128(begin, _end);
   }
 
   DCL_ALWAYS_INLINE
-  uintptr_t getSleb128(const uint8_t *&begin) const {
+  uintptr_t getSleb128(const uint8_t *& begin) const {
     return readSleb128(begin, _end);
   }
 };
 
-} // namespace Dyld
-
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin::Dyld
 
 #endif // DCL_TARGET_OS_DARWIN
 
-#endif // DCL_BINARY_DARWIN_DYLD_DYLD_INFO_H
+#endif // DCL_BINARY_DARWIN_DYLD_DYLDINFO_H

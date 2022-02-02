@@ -11,8 +11,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_BINARY_DARWIN_DYLD_DYLD_FIXUP_CHAINS_H
-#define DCL_BINARY_DARWIN_DYLD_DYLD_FIXUP_CHAINS_H
+#ifndef DCL_BINARY_DARWIN_DYLD_DYLDFIXUPCHAINS_H
+#define DCL_BINARY_DARWIN_DYLD_DYLDFIXUPCHAINS_H
 
 #include <dcl/Basic/Basic.h>
 
@@ -28,13 +28,7 @@
 
 #include <mach-o/fixup-chains.h>
 
-namespace dcl {
-
-namespace Binary {
-
-namespace Darwin {
-
-namespace Dyld {
+namespace dcl::Binary::Darwin::Dyld {
 
 // Relies on specific version of dyld fix-chain.
 static_assert(__MACH_O_FIXUP_CHAINS__ == 6);
@@ -71,9 +65,9 @@ template <typename Target, typename ByteOrder>
 class ChainedStartsInImage;
 
 template <typename Target, typename ByteOrder>
-class ChainedFixupsHeader
-    : public ADT::PlatformTypeWrapper<
-          typename Target::DyldChainedFixupsHeaderTy, ByteOrder> {
+class ChainedFixupsHeader : public ADT::PlatformTypeWrapper<
+                              typename Target::DyldChainedFixupsHeaderTy,
+                              ByteOrder> {
 public:
   using ImportFormat = ChainedImportFormat;
   using SymbolFormat = ChainedSymbolFormat;
@@ -94,15 +88,15 @@ public:
   DCL_PLATFORM_TYPE_GETTER(SymbolFormat, SymbolsFormat, symbols_format);
 
   DCL_ALWAYS_INLINE
-  const ChainedStartsInImage<Target, ByteOrder> *getStarts() {
+  const ChainedStartsInImage<Target, ByteOrder> * getStarts() {
     return reinterpret_cast<ChainedStartsInImage<Target, ByteOrder> *>(
-        this->getBase() + getStartsOffset());
+      this->getBase() + getStartsOffset());
   }
 
   DCL_ALWAYS_INLINE
-  const ChainedStartsInImage<Target, ByteOrder> *const getStarts() const {
+  const ChainedStartsInImage<Target, ByteOrder> * const getStarts() const {
     return reinterpret_cast<ChainedStartsInImage<Target, ByteOrder> *>(
-        this->getBase() + getStartsOffset());
+      this->getBase() + getStartsOffset());
   }
 };
 
@@ -110,9 +104,9 @@ template <typename Target, typename ByteOrder>
 class ChainedStartsInSegment;
 
 template <typename Target, typename ByteOrder>
-class ChainedStartsInImage
-    : public ADT::PlatformTypeWrapper<
-          typename Target::DyldChainedStartsInImageTy, ByteOrder> {
+class ChainedStartsInImage : public ADT::PlatformTypeWrapper<
+                               typename Target::DyldChainedStartsInImageTy,
+                               ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, SegmentCount, seg_count);
@@ -129,9 +123,9 @@ public:
 };
 
 template <typename Target, typename ByteOrder>
-class ChainedStartsInSegment
-    : public ADT::PlatformTypeWrapper<
-          typename Target::DyldChainedStartsInSegmentTy, ByteOrder> {
+class ChainedStartsInSegment : public ADT::PlatformTypeWrapper<
+                                 typename Target::DyldChainedStartsInSegmentTy,
+                                 ByteOrder> {
 public:
   using PointerFormat = ChainedPointerFormat;
 
@@ -157,9 +151,9 @@ public:
 #pragma mark - Chained Import
 
 template <typename ByteOrder>
-class ChainedImport
-    : public ADT::PlatformTypeWrapper<ChainedImportTraits<ChainedImport<ByteOrder>>,
-                                      ByteOrder> {
+class ChainedImport : public ADT::PlatformTypeWrapper<
+                        ChainedImportTraits<ChainedImport<ByteOrder>>,
+                        ByteOrder> {
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, LibraryOrdinal, lib_ordinal);
 
@@ -170,8 +164,9 @@ public:
 
 template <typename ByteOrder>
 class ChainedImportAddend
-    : public ADT::PlatformTypeWrapper<ChainedImportTraits<ChainedImportAddend<ByteOrder>>,
-                                      ByteOrder> {
+  : public ADT::PlatformTypeWrapper<
+      ChainedImportTraits<ChainedImportAddend<ByteOrder>>,
+      ByteOrder> {
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, LibraryOrdinal, lib_ordinal);
 
@@ -184,8 +179,9 @@ public:
 
 template <typename ByteOrder>
 class ChainedImportAddend64
-    : public ADT::PlatformTypeWrapper<ChainedImportTraits<ChainedImportAddend64<ByteOrder>>,
-                                      ByteOrder> {
+  : public ADT::PlatformTypeWrapper<
+      ChainedImportTraits<ChainedImportAddend64<ByteOrder>>,
+      ByteOrder> {
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, LibraryOrdinal, lib_ordinal);
 
@@ -198,65 +194,74 @@ public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, Addend, addend);
 };
 
-template <typename Target, typename ByteOrder, template<typename> typename ImportFormat>
+template <
+  typename Target,
+  typename ByteOrder,
+  template <typename>
+  typename ImportFormat>
 class ChainedImportIterator
-    : public RandomAccessIterator<
-          ChainedImportIterator<Target, ByteOrder, ImportFormat>> {
+  : public RandomAccessIterator<
+      ChainedImportIterator<Target, ByteOrder, ImportFormat>> {
 public:
   using ChainedImport = ImportFormat<ByteOrder>;
-  using difference_type = typename IteratorTraits<ChainedImportIterator<
-      Target, ByteOrder, ImportFormat>>::DifferenceTy;
+  using difference_type = typename IteratorTraits<
+    ChainedImportIterator<Target, ByteOrder, ImportFormat>>::DifferenceTy;
 
 private:
-  ChainedImport *_import;
+  ChainedImport * _import;
 
 public:
-  ChainedImportIterator(ChainedImport *import) : _import(import) {}
+  explicit ChainedImportIterator(ChainedImport * import) : _import(import) {}
 
-  ChainedImportIterator(const ChainedImport *import) : _import(import) {}
-
-  DCL_ALWAYS_INLINE
-  ChainedImport *get() { return _import; }
+  explicit ChainedImportIterator(const ChainedImport * import)
+    : _import(import) {}
 
   DCL_ALWAYS_INLINE
-  ChainedImport *const get() const { return _import; }
+  ChainedImport * get() { return _import; }
+
+  DCL_ALWAYS_INLINE
+  ChainedImport * const get() const { return _import; }
 
   DCL_ALWAYS_INLINE
   void advance(difference_type distance) { _import += distance; }
 
   DCL_ALWAYS_INLINE
-  bool isEqual(const ChainedImportIterator<Target, ByteOrder,
-                                                 ImportFormat> &other) const {
+  bool isEqual(
+    const ChainedImportIterator<Target, ByteOrder, ImportFormat>& other) const {
     return get() == other.get();
   }
 
   DCL_ALWAYS_INLINE
   difference_type distance(
-      const ChainedImportIterator<Target, ByteOrder, ImportFormat> &other)
-      const {
+    const ChainedImportIterator<Target, ByteOrder, ImportFormat>& other) const {
     return get() - other.get();
   }
 
   DCL_ALWAYS_INLINE
-  bool lessThan(const ChainedImportIterator<Target, ByteOrder,
-                                                  ImportFormat> &other) const {
+  bool lessThan(
+    const ChainedImportIterator<Target, ByteOrder, ImportFormat>& other) const {
     return get() < other.get();
   }
 };
 
-template <typename Target, typename ByteOrder, template<typename> typename ImportFormat>
+template <
+  typename Target,
+  typename ByteOrder,
+  template <typename>
+  typename ImportFormat>
 class ChainedImportList {
 private:
-  ChainedFixupsHeader<Target, ByteOrder> *_header;
+  ChainedFixupsHeader<Target, ByteOrder> * _header;
 
 public:
   DCL_ALWAYS_INLINE
-  ChainedImportList(ChainedFixupsHeader<Target, ByteOrder> *header)
-      : _header(header) {}
+  explicit ChainedImportList(ChainedFixupsHeader<Target, ByteOrder> * header)
+    : _header(header) {}
 
   DCL_ALWAYS_INLINE
-  ChainedImportList(const ChainedFixupsHeader<Target, ByteOrder> *header)
-      : _header(const_cast<ChainedFixupsHeader<Target, ByteOrder> *>(header)) {}
+  explicit ChainedImportList(
+    const ChainedFixupsHeader<Target, ByteOrder> * header)
+    : _header(const_cast<ChainedFixupsHeader<Target, ByteOrder> *>(header)) {}
 
   using Iterator = ChainedImportIterator<Target, ByteOrder, ImportFormat>;
   using ConstIterator = typename std::add_const<Iterator>::type;
@@ -316,6 +321,10 @@ protected:
     Base _base;
   };
 
+  const uint8_t * getBase() const {
+    return reinterpret_cast<const uint8_t *>(&_prototype);
+  }
+
 public:
   DCL_ALWAYS_INLINE
   bool isBind() { return std::as_const(*this).isBind(); }
@@ -324,16 +333,16 @@ public:
   bool isBind() const { return _prototype.bind; }
 
   DCL_ALWAYS_INLINE
-  Derived *getNext() {
+  Derived * getNext() {
     return const_cast<Derived *>(std::as_const(*this).getNext());
   }
 
   DCL_ALWAYS_INLINE
-  const Derived *getNext() const {
+  const Derived * getNext() const {
     if (_prototype.next == 0) {
       return nullptr;
     }
-    return reinterpret_cast<Derived *>((uintptr_t)&_prototype + 4 * _prototype.next);
+    return reinterpret_cast<Derived *>(getBase() + 4 * _prototype.next);
   }
 };
 
@@ -343,9 +352,9 @@ class ChainedPointer64Bind;
 class ChainedPointerArm64EBind;
 class ChainedPointerArm64EAuthBind;
 
-class ChainedPointer64: public ChainedPointerBase<ChainedPointer64> { };
+class ChainedPointer64 : public ChainedPointerBase<ChainedPointer64> {};
 
-class ChainedPointerArm64E: public ChainedPointerBase<ChainedPointerArm64E> {
+class ChainedPointerArm64E : public ChainedPointerBase<ChainedPointerArm64E> {
 public:
   DCL_ALWAYS_INLINE
   bool isAuth() { return std::as_const(*this).isAuth(); }
@@ -354,17 +363,15 @@ public:
   bool isAuth() const { return _base.auth; }
 };
 
-class ChainedPointer64Bind
-    : public ChainedPointerBase<ChainedPointer64Bind> {
+class ChainedPointer64Bind : public ChainedPointerBase<ChainedPointer64Bind> {
 
 public:
   DCL_ALWAYS_INLINE
-  static uint64_t bind(ChainedPointer64Bind *pointer,
-                       const void *const *addressList) {
+  static uint64_t
+  bind(ChainedPointer64Bind * pointer, const void * const * addressList) {
     *reinterpret_cast<uint64_t *>(pointer) =
-        *reinterpret_cast<const uint64_t *>(addressList +
-                                            pointer->getOrdinal()) +
-        pointer->getAddend();
+      *reinterpret_cast<const uint64_t *>(addressList + pointer->getOrdinal()) +
+      pointer->getAddend();
     return *reinterpret_cast<uint64_t *>(pointer);
   }
 
@@ -380,17 +387,17 @@ public:
   DCL_ALWAYS_INLINE
   uint64_t getAddend() const { return _base.addend; }
 };
+
 class ChainedPointerArm64EBind
-    : public ChainedPointerBase<ChainedPointerArm64EBind> {
+  : public ChainedPointerBase<ChainedPointerArm64EBind> {
 
 public:
   DCL_ALWAYS_INLINE
-  static uint64_t bind(ChainedPointerArm64EBind *pointer,
-                       const void *const *addressList) {
+  static uint64_t
+  bind(ChainedPointerArm64EBind * pointer, const void * const * addressList) {
     *reinterpret_cast<uint64_t *>(pointer) =
-        *reinterpret_cast<const uint64_t *>(addressList +
-                                            pointer->getOrdinal()) +
-        pointer->getAddend();
+      *reinterpret_cast<const uint64_t *>(addressList + pointer->getOrdinal()) +
+      pointer->getAddend();
     return *reinterpret_cast<uint64_t *>(pointer);
   }
 
@@ -413,11 +420,13 @@ public:
   uint64_t getAddend() const { return _base.addend; }
 };
 class ChainedPointerArm64EAuthBind
-    : public ChainedPointerBase<ChainedPointerArm64EAuthBind> {
+  : public ChainedPointerBase<ChainedPointerArm64EAuthBind> {
 
 public:
-  DCL_ALWAYS_INLINE 
-  static void bind(ChainedPointerArm64EAuthBind * pointer, const void * const * addressList) {
+  DCL_ALWAYS_INLINE
+  static void bind(
+    ChainedPointerArm64EAuthBind * pointer,
+    const void * const * addressList) {
     dcl::notImplemented();
   }
 
@@ -451,11 +460,11 @@ public:
 template <typename ChainedPointer>
 class ChainedPointerIterator {
 private:
-  ChainedPointer *_base;
+  ChainedPointer * _base;
 
 public:
   DCL_ALWAYS_INLINE
-  ChainedPointerIterator<ChainedPointer> &operator++() {
+  ChainedPointerIterator<ChainedPointer>& operator++() {
     _base = _base->getNext();
     return *this;
   }
@@ -492,22 +501,22 @@ template <typename Target, typename ByteOrder, typename Format>
 class ChainedFixupsPageInfoIterator {
 
 private:
-  MachHeader<Target, ByteOrder> *_machHeader;
+  MachHeader<Target, ByteOrder> * _machHeader;
 
-  ChainedStartsInSegment<Target, ByteOrder> *_startsInSegment;
+  ChainedStartsInSegment<Target, ByteOrder> * _startsInSegment;
 
   size_t _pageIndex;
 
 public:
   ChainedFixupsPageInfoIterator(
-      MachHeader<Target, ByteOrder> *machHeader,
-      ChainedStartsInSegment<Target, ByteOrder> *startsInSegment,
-      size_t pageIndex)
-      : _machHeader(machHeader), _startsInSegment(startsInSegment),
-        _pageIndex(pageIndex) {}
+    MachHeader<Target, ByteOrder> * machHeader,
+    ChainedStartsInSegment<Target, ByteOrder> * startsInSegment,
+    size_t pageIndex)
+    : _machHeader(machHeader), _startsInSegment(startsInSegment),
+      _pageIndex(pageIndex) {}
 
   DCL_ALWAYS_INLINE
-  ChainedFixupsPageInfoIterator<Target, ByteOrder, Format> &operator++() {
+  ChainedFixupsPageInfoIterator<Target, ByteOrder, Format>& operator++() {
     _pageIndex++;
     return *this;
   }
@@ -521,7 +530,7 @@ public:
 
   DCL_ALWAYS_INLINE
   bool operator==(
-      ChainedFixupsPageInfoIterator<Target, ByteOrder, Format> other) const {
+    ChainedFixupsPageInfoIterator<Target, ByteOrder, Format> other) const {
     return _machHeader == other.machHeader &&
            _startsInSegment == other._startsInSegment &&
            _pageIndex == other._pageIndex;
@@ -529,14 +538,14 @@ public:
 
   DCL_ALWAYS_INLINE
   bool operator!=(
-      ChainedFixupsPageInfoIterator<Target, ByteOrder, Format> other) const {
+    ChainedFixupsPageInfoIterator<Target, ByteOrder, Format> other) const {
     return !(*this == other);
   }
 
   DCL_ALWAYS_INLINE
   ChainedPointerIterator<Format> operator*() {
     return const_cast<ChainedPointerIterator<Format>>(
-        std::as_const(*this).operator*());
+      std::as_const(*this).operator*());
   }
 
   DCL_ALWAYS_INLINE
@@ -553,16 +562,16 @@ template <typename Target, typename ByteOrder, typename Format>
 class ChainedFixupsPageInfoCollection {
 
 private:
-  MachHeader<Target, ByteOrder> *_machHeader;
+  MachHeader<Target, ByteOrder> * _machHeader;
 
-  ChainedStartsInSegment<Target, ByteOrder> *_startsInSegment;
+  ChainedStartsInSegment<Target, ByteOrder> * _startsInSegment;
 
 public:
   DCL_ALWAYS_INLINE
   ChainedFixupsPageInfoCollection(
-      MachHeader<Target, ByteOrder> *machHeader,
-      ChainedStartsInSegment<Target, ByteOrder> *startsInSegment)
-      : _machHeader(machHeader), _startsInSegment(startsInSegment) {}
+    MachHeader<Target, ByteOrder> * machHeader,
+    ChainedStartsInSegment<Target, ByteOrder> * startsInSegment)
+    : _machHeader(machHeader), _startsInSegment(startsInSegment) {}
 
   using Iterator = ChainedFixupsPageInfoIterator<Target, ByteOrder, Format>;
   using ConstIterator = typename std::add_const<Iterator>::type;
@@ -588,8 +597,8 @@ public:
 
   DCL_ALWAYS_INLINE
   ConstIterator cend() const {
-    return Iterator{_machHeader, _startsInSegment,
-                    _startsInSegment->SegmentCount()};
+    return Iterator{
+      _machHeader, _startsInSegment, _startsInSegment->SegmentCount()};
   }
 };
 
@@ -602,32 +611,32 @@ template <typename Target, typename ByteOrder>
 class ChainedFixupsSegmentInfo {
 
 private:
-  MachHeader<Target, ByteOrder> *_machHeader;
+  MachHeader<Target, ByteOrder> * _machHeader;
 
-  ChainedStartsInSegment<Target, ByteOrder> *_startsInSegment;
+  ChainedStartsInSegment<Target, ByteOrder> * _startsInSegment;
 
 public:
   DCL_ALWAYS_INLINE
   ChainedFixupsSegmentInfo(
-      MachHeader<Target, ByteOrder> *machHeader,
-      ChainedStartsInSegment<Target, ByteOrder> *startsInSegment)
-      : _machHeader(machHeader), _startsInSegment(startsInSegment) {}
+    MachHeader<Target, ByteOrder> * machHeader,
+    ChainedStartsInSegment<Target, ByteOrder> * startsInSegment)
+    : _machHeader(machHeader), _startsInSegment(startsInSegment) {}
 
   DCL_ALWAYS_INLINE
-  MachHeader<Target, ByteOrder> *getMachHeader() { return _machHeader; }
+  MachHeader<Target, ByteOrder> * getMachHeader() { return _machHeader; }
 
   DCL_ALWAYS_INLINE
-  const MachHeader<Target, ByteOrder> *const getMachHeader() const {
+  const MachHeader<Target, ByteOrder> * const getMachHeader() const {
     return _machHeader;
   }
 
   DCL_ALWAYS_INLINE
-  ChainedStartsInSegment<Target, ByteOrder> *getStartsInSegment() {
+  ChainedStartsInSegment<Target, ByteOrder> * getStartsInSegment() {
     return _startsInSegment;
   }
 
   DCL_ALWAYS_INLINE
-  const ChainedStartsInSegment<Target, ByteOrder> *const
+  const ChainedStartsInSegment<Target, ByteOrder> * const
   getStartsInSegment() const {
     return _startsInSegment;
   }
@@ -637,21 +646,22 @@ template <typename Target, typename ByteOrder>
 class ChainedFixupsSegmentInfoIterator {
 
 private:
-  MachHeader<Target, ByteOrder> *_machHeader;
+  MachHeader<Target, ByteOrder> * _machHeader;
 
-  ChainedStartsInImage<Target, ByteOrder> *_startsInImage;
+  ChainedStartsInImage<Target, ByteOrder> * _startsInImage;
 
   size_t _index;
 
 public:
   DCL_ALWAYS_INLINE
   ChainedFixupsSegmentInfoIterator(
-      MachHeader<Target, ByteOrder> *machHeader,
-      ChainedStartsInImage<Target, ByteOrder> *startsInImage, size_t index)
-      : _startsInImage(startsInImage), _machHeader(machHeader), _index(index) {}
+    MachHeader<Target, ByteOrder> * machHeader,
+    ChainedStartsInImage<Target, ByteOrder> * startsInImage,
+    size_t index)
+    : _startsInImage(startsInImage), _machHeader(machHeader), _index(index) {}
 
   DCL_ALWAYS_INLINE
-  ChainedFixupsSegmentInfoIterator<Target, ByteOrder> &operator++() {
+  ChainedFixupsSegmentInfoIterator<Target, ByteOrder>& operator++() {
     _index++;
     return *this;
   }
@@ -679,16 +689,16 @@ public:
   DCL_ALWAYS_INLINE
   ChainedFixupsSegmentInfo<Target, ByteOrder> operator*() {
     return const_cast<ChainedFixupsSegmentInfo<Target, ByteOrder>>(
-        std::as_const(*this).operator*());
+      std::as_const(*this).operator*());
   }
 
   DCL_ALWAYS_INLINE
   const ChainedFixupsSegmentInfo<Target, ByteOrder> operator*() const {
     return ChainedFixupsSegmentInfo<Target, ByteOrder>{
-        _machHeader,
-        reinterpret_cast<ChainedStartsInSegment<Target, ByteOrder> *>(
-            _startsInImage->getBase() +
-            _startsInImage->getSegmentInfoOffsetAtIndex(_index))};
+      _machHeader,
+      reinterpret_cast<ChainedStartsInSegment<Target, ByteOrder> *>(
+        _startsInImage->getBase() +
+        _startsInImage->getSegmentInfoOffsetAtIndex(_index))};
   }
 };
 
@@ -696,24 +706,24 @@ template <typename Target, typename ByteOrder>
 class ChainedFixupsSegmentInfoCollection {
 
 private:
-  MachHeader<Target, ByteOrder> *_machHeader;
+  MachHeader<Target, ByteOrder> * _machHeader;
 
-  ChainedStartsInImage<Target, ByteOrder> *_startsInImage;
+  ChainedStartsInImage<Target, ByteOrder> * _startsInImage;
 
 public:
   DCL_ALWAYS_INLINE
   ChainedFixupsSegmentInfoCollection(
-      MachHeader<Target, ByteOrder> *machHeader,
-      ChainedFixupsHeader<Target, ByteOrder> *chainedFixupsHeader)
-      : _machHeader(machHeader),
-        _startsInImage(chainedFixupsHeader->getStarts()) {}
+    MachHeader<Target, ByteOrder> * machHeader,
+    ChainedFixupsHeader<Target, ByteOrder> * chainedFixupsHeader)
+    : _machHeader(machHeader),
+      _startsInImage(chainedFixupsHeader->getStarts()) {}
 
   DCL_ALWAYS_INLINE
   ChainedFixupsSegmentInfoCollection(
-      const MachHeader<Target, ByteOrder> *machHeader,
-      const ChainedFixupsHeader<Target, ByteOrder> *chainedFixupsHeader)
-      : _machHeader(const_cast<MachHeader<Target, ByteOrder> *>(machHeader)),
-        _startsInImage(chainedFixupsHeader->getStarts()) {}
+    const MachHeader<Target, ByteOrder> * machHeader,
+    const ChainedFixupsHeader<Target, ByteOrder> * chainedFixupsHeader)
+    : _machHeader(const_cast<MachHeader<Target, ByteOrder> *>(machHeader)),
+      _startsInImage(chainedFixupsHeader->getStarts()) {}
 
   using Iterator = ChainedFixupsSegmentInfoIterator<Target, ByteOrder>;
   using ConstIterator = typename std::add_const<Iterator>::type;
@@ -739,19 +749,13 @@ public:
 
   DCL_ALWAYS_INLINE
   ConstIterator cend() const {
-    return Iterator{_machHeader, _startsInImage,
-                    _startsInImage->SegmentCount()};
+    return Iterator{
+      _machHeader, _startsInImage, _startsInImage->SegmentCount()};
   }
 };
 
-} // namespace Dyld
-
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin::Dyld
 
 #endif // DCL_TARGET_OS_DARWIN
 
-#endif // DCL_BINARY_DARWIN_DYLD_DYLD_FIXUP_CHAINS_H
+#endif // DCL_BINARY_DARWIN_DYLD_DYLDFIXUPCHAINS_H

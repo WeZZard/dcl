@@ -19,9 +19,10 @@
 #include <mach-o/loader.h>
 #endif
 
-DYLD_BIND_SUB_OPCODE(SetBindOrdinalTableSizeUleb,
-                     BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB,
-                     "Set bind ordinal table size with uleb")
+DYLD_BIND_SUB_OPCODE(
+  SetBindOrdinalTableSizeUleb,
+  BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB,
+  "Set bind ordinal table size with uleb")
 DYLD_BIND_SUB_OPCODE(Apply, BIND_SUBOPCODE_THREADED_APPLY, "Apply")
 
 #undef DYLD_BIND_SUB_OPCODE

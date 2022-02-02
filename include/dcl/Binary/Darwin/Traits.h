@@ -19,15 +19,12 @@
 #if DCL_TARGET_OS_DARWIN
 
 #include <cstdint>
+#include <iterator>
 #include <mach-o/fixup-chains.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 
-namespace dcl {
-
-namespace Binary {
-
-namespace Darwin {
+namespace dcl::Binary::Darwin {
 
 #pragma mark - Load Command Traits
 
@@ -46,7 +43,7 @@ class LoadCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<LoadCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::LoadCommandTy;
 };
@@ -56,7 +53,7 @@ class SegmentCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<SegmentCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::SegmentCommandTy;
 };
@@ -66,7 +63,7 @@ class DyldInfoCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<DyldInfoCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::DyldInfoCommandTy;
 };
@@ -76,7 +73,7 @@ class DylibCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<DylibCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::DylibCommandTy;
 };
@@ -86,7 +83,7 @@ class RPathCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<RPathCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::RPathCommandTy;
 };
@@ -96,7 +93,7 @@ class SymbolTableCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<SymbolTableCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::SymbolTableCommandTy;
 };
@@ -106,7 +103,7 @@ class LinkEditDataCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<LinkEditDataCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::LinkEditDataCommandTy;
 };
@@ -116,7 +113,7 @@ class ExportsTrieCommand;
 
 template <typename Target, typename ByteOrder>
 class LoadCommandTraits<ExportsTrieCommand<Target, ByteOrder>>
-    : public LoadCommandTraitsBase<Target, ByteOrder> {
+  : public LoadCommandTraitsBase<Target, ByteOrder> {
 public:
   using CommandTy = typename Target::LinkEditDataCommandTy;
 };
@@ -159,11 +156,7 @@ public:
   using CategoryTy = std::random_access_iterator_tag;
 };
 
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin
 
 #endif // DCL_TARGET_OS_DARWIN
 

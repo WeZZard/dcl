@@ -31,7 +31,7 @@ namespace Darwin {
 
 template <typename Target, typename ByteOrder>
 class FatHeader
-    : public ADT::PlatformTypeWrapper<typename Target::FatHeaderTy, ByteOrder> {
+  : public ADT::PlatformTypeWrapper<typename Target::FatHeaderTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, Magic, magic);
@@ -40,7 +40,7 @@ public:
 };
 template <typename Target, typename ByteOrder>
 class FatArch
-    : public ADT::PlatformTypeWrapper<typename Target::FatArchTy, ByteOrder> {
+  : public ADT::PlatformTypeWrapper<typename Target::FatArchTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, Offset, offset);
@@ -58,14 +58,12 @@ private:
 
 public:
   FatArchCollection(FatHeader<Target, Endianess> header) = delete;
-  FatArchCollection(const FatArchCollection &) = delete;
-  FatArchCollection &operator=(const FatArchCollection &) = delete;
+  FatArchCollection(const FatArchCollection&) = delete;
+  FatArchCollection& operator=(const FatArchCollection&) = delete;
 
-  FatHeader<Target, Endianess> *getHeader() {
-    return &_header;
-  }
+  FatHeader<Target, Endianess> * getHeader() { return &_header; }
 
-  const FatHeader<Target, Endianess> *const getHeader() const {
+  const FatHeader<Target, Endianess> * const getHeader() const {
     return &_header;
   }
 
@@ -74,7 +72,7 @@ public:
 
   DCL_ALWAYS_INLINE
   Iterator begin() {
-    return Iterator { getHeader()->getBase() + (uintptr_t)sizeof(getHeader()) };
+    return Iterator{getHeader()->getBase() + (uintptr_t)sizeof(getHeader())};
   }
 
   DCL_ALWAYS_INLINE
@@ -90,17 +88,18 @@ public:
 
   DCL_ALWAYS_INLINE
   ConstIterator cbegin() const {
-    return (ConstIterator)getHeader()->getBase() + (uintptr_t)sizeof(getHeader());
+    return (ConstIterator)getHeader()->getBase() +
+           (uintptr_t)sizeof(getHeader());
   }
 
   DCL_ALWAYS_INLINE
   ConstIterator cend() const { return begin() + getHeader()->getArchCount(); }
 
   DCL_ALWAYS_INLINE
-  FatArch<Target, Endianess> &at(uint32_t index) { return *(begin() + index); }
+  FatArch<Target, Endianess>& at(uint32_t index) { return *(begin() + index); }
 
   DCL_ALWAYS_INLINE
-  const FatArch<Target, Endianess> &at(uint32_t index) const {
+  const FatArch<Target, Endianess>& at(uint32_t index) const {
     return *(cbegin() + index);
   }
 };

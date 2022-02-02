@@ -11,19 +11,17 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_ADT_BYTE_ORDER_H
-#define DCL_ADT_BYTE_ORDER_H
+#ifndef DCL_ADT_BYTEORDER_H
+#define DCL_ADT_BYTEORDER_H
 
 #include <dcl/Basic/Basic.h>
 
 #include <cstdint>
 #include <limits>
 
-namespace dcl {
+namespace dcl::ADT {
 
-namespace ADT {
-
-namespace {
+namespace details {
 
 template <typename ResultTy>
 DCL_UNUSED
@@ -45,7 +43,7 @@ DCL_UNUSED
 DCL_ALWAYS_INLINE
 static ResultTy SwapHostToBig(ResultTy x);
 
-} // namespace
+} // namespace details
 
 /** concept `ByteOrder`
 
@@ -57,14 +55,14 @@ public:
   DCL_ALWAYS_INLINE
   static ResultTy swapToHost(ResultTy x) {
     static_assert(std::numeric_limits<ResultTy>::is_integer);
-    return SwapLittleToHost(x);
+    return details::SwapLittleToHost(x);
   }
 
   template <typename ResultTy>
   DCL_ALWAYS_INLINE
   static ResultTy swapFromHost(ResultTy x) {
     static_assert(std::numeric_limits<ResultTy>::is_integer);
-    return SwapHostToLittle(x);
+    return details::SwapHostToLittle(x);
   }
 };
 
@@ -75,14 +73,14 @@ public:
   DCL_ALWAYS_INLINE
   static ResultTy swapToHost(ResultTy x) {
     static_assert(std::numeric_limits<ResultTy>::is_integer);
-    return SwapBigToHost(x);
+    return details::SwapBigToHost(x);
   }
 
   template <typename ResultTy>
   DCL_ALWAYS_INLINE
   static ResultTy swapFromHost(ResultTy x) {
     static_assert(std::numeric_limits<ResultTy>::is_integer);
-    return SwapHostToBig(x);
+    return details::SwapHostToBig(x);
   }
 };
 
@@ -95,7 +93,7 @@ using HostByteOrder = BigEndianess;
 
 #pragma mark - Implementation Details
 
-namespace {
+namespace details {
 
 template <typename ResultTy>
 DCL_UNUSED
@@ -114,7 +112,7 @@ DCL_UNUSED
 DCL_ALWAYS_INLINE
 static ResultTy SwapHostToBig(ResultTy x) { return ResultTy(); }
 
-} // namespace
+} // namespace details
 
 #pragma mark - Implementations for Darwin
 
@@ -122,7 +120,7 @@ static ResultTy SwapHostToBig(ResultTy x) { return ResultTy(); }
 
 #include <libkern/OSByteOrder.h>
 
-namespace {
+namespace details {
 template <>
 DCL_ALWAYS_INLINE
 uint16_t SwapLittleToHost(uint16_t x) { return OSSwapLittleToHostInt16(x); }
@@ -160,12 +158,10 @@ template <>
 DCL_ALWAYS_INLINE
 uint64_t SwapHostToBig(uint64_t x) { return OSSwapHostToBigInt64(x); }
 
-} // namespace
+} // namespace details
 
 #endif // DCL_TARGET_OS_DARWIN
 
-} // namespace ADT
+} // namespace dcl::ADT
 
-} // namespace dcl
-
-#endif // DCL_ADT_BYTE_ORDER_H
+#endif // DCL_ADT_BYTEORDER_H

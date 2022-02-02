@@ -6,7 +6,7 @@
 // Licensed under Apache 2.0 License
 //
 // See https://github.com/dcl-project/dcl/LICENSE.txt for license information
-// See https://github.com/dcl-project/dcl/graphs/contributors for the list of 
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
 // DCL project authors
 //
 //===----------------------------------------------------------------------===//
@@ -14,6 +14,6 @@
 #ifndef DCL_BASIC_OS_H
 #define DCL_BASIC_OS_H
 
-#define DCL_TARGET_OS_DARWIN    __MACH__
+#define DCL_TARGET_OS_DARWIN __MACH__
 
 #endif // DCL_BASIC_OS_H

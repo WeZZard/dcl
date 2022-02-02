@@ -11,8 +11,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_BINARY_DARWIN_MACH_O_VIEW_H
-#define DCL_BINARY_DARWIN_MACH_O_VIEW_H
+#ifndef DCL_BINARY_DARWIN_MACHOVIEW_H
+#define DCL_BINARY_DARWIN_MACHOVIEW_H
 
 #include <dcl/Basic/Basic.h>
 
@@ -27,13 +27,9 @@
 #include <iterator>
 #include <utility>
 
-namespace dcl {
+namespace dcl::Binary::Darwin {
 
-namespace Binary {
-
-namespace Darwin {
-
-namespace {
+namespace details {
 /** concept `File`
 
  */
@@ -72,7 +68,7 @@ public:
   using FatArchTy = fat_arch_64;
 };
 
-} // namespace
+} // namespace details
 
 #pragma mark - MachO
 
@@ -83,9 +79,9 @@ private:
   MachHeader<Target, Endianess> _header_;
 
 public:
-  MachO(const MachO &) = delete;
+  MachO(const MachO&) = delete;
 
-  MachO(MachO &&) = delete;
+  MachO(MachO&&) = delete;
 
   using PointerValueTy = typename Target::PointerValueTy;
 
@@ -95,15 +91,13 @@ public:
   Format getFormat() const { return GetFormatWithBytes<MachOMagic>(&_header_); }
 
   DCL_ALWAYS_INLINE
-  MachHeader<Target, Endianess> *getHeader() {
+  MachHeader<Target, Endianess> * getHeader() {
     return const_cast<MachHeader<Target, Endianess> *>(
-        std::as_const(*this).getHeader());
+      std::as_const(*this).getHeader());
   }
 
   DCL_ALWAYS_INLINE
-  const MachHeader<Target, Endianess> *getHeader() const {
-    return &_header_;
-  }
+  const MachHeader<Target, Endianess> * getHeader() const { return &_header_; }
 };
 
 #pragma mark - Fat
@@ -112,14 +106,22 @@ template <typename Target, typename Endianess>
 class Fat {
 
 private:
-  void *_header;
+  void * _header;
+
+  DCL_ALWAYS_INLINE
+  uint8_t * getBase() { return reinterpret_cast<uint8_t *>(_header); }
+
+  DCL_ALWAYS_INLINE
+  const uint8_t * getBase() const {
+    return reinterpret_cast<const uint8_t *>(_header);
+  }
 
 public:
   DCL_ALWAYS_INLINE
-  Fat(void *header) : _header(header) {}
+  explicit Fat(void * header) : _header(header) {}
 
   DCL_ALWAYS_INLINE
-  FatHeader<Target, Endianess> *getHeader() const {
+  FatHeader<Target, Endianess> * getHeader() const {
     return reinterpret_cast<FatHeader<Target, Endianess> *>(_header);
   }
 
@@ -134,51 +136,61 @@ public:
   // MARK: Accessing Fat Arch Collection
 
   DCL_ALWAYS_INLINE
-  FatArchCollection<Target, Endianess> &getArchs() {
+  FatArchCollection<Target, Endianess>& getArchs() {
     return *reinterpret_cast<FatArchCollection<Target, Endianess> *>(
-        getHeader());
+      getHeader());
   }
 
   DCL_ALWAYS_INLINE
-  const FatArchCollection<Target, Endianess> &getArchs() const {
+  const FatArchCollection<Target, Endianess>& getArchs() const {
     return *reinterpret_cast<const FatArchCollection<Target, Endianess> *>(
-        getHeader());
+      getHeader());
   }
 
   // MARK: Accessing Mach Header
 
   DCL_ALWAYS_INLINE
-  void *getMachHeaderAt(uint32_t index) const {
+  void * getMachHeaderAt(uint32_t index) {
     return reinterpret_cast<void *>(
-        (uintptr_t)_header + (uintptr_t)getArchs().at(index).getOffset());
+      getBase() + getArchs().at(index).getOffset());
+  }
+
+  DCL_ALWAYS_INLINE
+  const void * getMachHeaderAt(uint32_t index) const {
+    return reinterpret_cast<const void *>(
+      getBase() + getArchs().at(index).getOffset());
   }
 
   template <typename T, typename E>
   DCL_ALWAYS_INLINE
-  MachO<T, E> *getMachHeaderAt(uint32_t index) const {
-    void *machOHeader = getMachHeaderAt(index);
+  MachO<T, E> * getMachHeaderAt(uint32_t index) const {
+    void * machOHeader = getMachHeaderAt(index);
     switch (GetFormatWithBytes<MachOMagic>(getMachHeaderAt(index))) {
     case Format::LittleEndianess64Bit:
-      if (T::wordSize == sizeof(uint64_t) &&
-          std::is_same<E, ADT::LittleEndianess>()) {
+      if (
+        T::wordSize == sizeof(uint64_t) &&
+        std::is_same<E, ADT::LittleEndianess>()) {
         return reinterpret_cast<MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::LittleEndianess32Bit:
-      if (T::wordSize == sizeof(uint32_t) &&
-          std::is_same<E, ADT::LittleEndianess>()) {
+      if (
+        T::wordSize == sizeof(uint32_t) &&
+        std::is_same<E, ADT::LittleEndianess>()) {
         return reinterpret_cast<MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::BigEndianess64Bit:
-      if (T::wordSize == sizeof(uint64_t) &&
-          std::is_same<E, ADT::BigEndianess>()) {
+      if (
+        T::wordSize == sizeof(uint64_t) &&
+        std::is_same<E, ADT::BigEndianess>()) {
         return reinterpret_cast<MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::BigEndianess32Bit:
-      if (T::wordSize == sizeof(uint32_t) &&
-          std::is_same<E, ADT::BigEndianess>()) {
+      if (
+        T::wordSize == sizeof(uint32_t) &&
+        std::is_same<E, ADT::BigEndianess>()) {
         return reinterpret_cast<MachO<T, E> *>(machOHeader);
       }
       break;
@@ -186,6 +198,11 @@ public:
       return nullptr;
     }
     return nullptr;
+  }
+
+  DCL_ALWAYS_INLINE
+  Format getMachOFormatAt(uint32_t index) {
+    return GetFormatWithBytes<MachOMagic>(getMachHeaderAt(index));
   }
 
   DCL_ALWAYS_INLINE
@@ -211,31 +228,34 @@ private:
   struct IteratorFat {
 
   private:
-    void *_header;
+    void * _header;
 
     Format _format;
 
     uint32_t _index;
 
-    mutable void *_machO;
+    mutable void * _machO;
 
   private:
     DCL_ALWAYS_INLINE
-    IteratorFat(void *header, uint32_t index)
-        : IteratorFat(header, GetFormatWithBytes<FatMagic>(header), index,
-                      nullptr) {}
+    IteratorFat(void * header, uint32_t index)
+      : IteratorFat(
+          header,
+          GetFormatWithBytes<FatMagic>(header),
+          index,
+          nullptr) {}
 
     DCL_ALWAYS_INLINE
-    IteratorFat(void *header, Format format, uint32_t index, void *machO)
-        : _header(header), _format(format), _index(index), _machO(machO) {}
+    IteratorFat(void * header, Format format, uint32_t index, void * machO)
+      : _header(header), _format(format), _index(index), _machO(machO) {}
 
   public:
     DCL_ALWAYS_INLINE
-    IteratorFat(void *header) : IteratorFat(header, 0) {}
+    explicit IteratorFat(void * header) : IteratorFat(header, 0) {}
 
   public:
     DCL_ALWAYS_INLINE
-    IteratorFat &operator++() {
+    IteratorFat& operator++() {
       _index++;
       return *this;
     }
@@ -267,19 +287,19 @@ private:
     Format getMachOFormat() const {
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
-        auto fat = Fat<File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::LittleEndianess32Bit: {
-        auto fat = Fat<File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::BigEndianess64Bit: {
-        auto fat = Fat<File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::BigEndianess32Bit: {
-        auto fat = Fat<File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::Unknown:
@@ -289,29 +309,29 @@ private:
 
     template <typename Target, typename Endianess>
     DCL_ALWAYS_INLINE
-    MachO<Target, Endianess> *getMachO() {
+    MachO<Target, Endianess> * getMachO() {
       return const_cast<MachO<Target, Endianess> *>(
-          std::as_const(*this).getMachO<Target, Endianess>());
+        std::as_const(*this).getMachO<Target, Endianess>());
     }
 
     template <typename Target, typename Endianess>
     DCL_ALWAYS_INLINE
-    const MachO<Target, Endianess> *getMachO() const {
+    const MachO<Target, Endianess> * getMachO() const {
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
-        auto fat = Fat<File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       case Format::LittleEndianess32Bit: {
-        auto fat = Fat<File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       case Format::BigEndianess64Bit: {
-        auto fat = Fat<File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       case Format::BigEndianess32Bit: {
-        auto fat = Fat<File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       default:
@@ -324,23 +344,23 @@ private:
       uint32_t archCount;
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
-        archCount =
-            Fat<File<uint64_t>, ADT::LittleEndianess>(_header).getArchCount();
+        archCount = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header)
+                      .getArchCount();
         break;
       }
       case Format::LittleEndianess32Bit: {
-        archCount =
-            Fat<File<uint32_t>, ADT::BigEndianess>(_header).getArchCount();
+        archCount = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header)
+                      .getArchCount();
         break;
       }
       case Format::BigEndianess64Bit: {
-        archCount =
-            Fat<File<uint64_t>, ADT::LittleEndianess>(_header).getArchCount();
+        archCount = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header)
+                      .getArchCount();
         break;
       }
       case Format::BigEndianess32Bit: {
-        archCount =
-            Fat<File<uint32_t>, ADT::BigEndianess>(_header).getArchCount();
+        archCount = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header)
+                      .getArchCount();
         break;
       }
       case Format::Unknown:
@@ -353,22 +373,22 @@ private:
   struct IteratorMachO {
 
   private:
-    void *_header;
+    void * _header;
 
     bool _reaches_end;
 
   private:
     DCL_ALWAYS_INLINE
-    IteratorMachO(void *header, bool reachesEnd)
-        : _header(header), _reaches_end(reachesEnd) {}
+    IteratorMachO(void * header, bool reachesEnd)
+      : _header(header), _reaches_end(reachesEnd) {}
 
   public:
     DCL_ALWAYS_INLINE
-    IteratorMachO(void *header) : IteratorMachO(header, false) {}
+    explicit IteratorMachO(void * header) : IteratorMachO(header, false) {}
 
   public:
     DCL_ALWAYS_INLINE
-    IteratorMachO &operator++() {
+    IteratorMachO& operator++() {
       DCLAssert(!_reaches_end);
       _reaches_end = true;
       return *this;
@@ -400,37 +420,41 @@ private:
 
     template <typename Target, typename Endianess>
     DCL_ALWAYS_INLINE
-    MachO<Target, Endianess> *getMachO() {
+    MachO<Target, Endianess> * getMachO() {
       return const_cast<MachO<Target, Endianess> *>(
-          std::as_const(*this).getMachO<Target, Endianess>());
+        std::as_const(*this).getMachO<Target, Endianess>());
     }
 
     template <typename Target, typename Endianess>
     DCL_ALWAYS_INLINE
-    const MachO<Target, Endianess> *getMachO() const {
+    const MachO<Target, Endianess> * getMachO() const {
       Format format = GetFormatWithBytes<MachOMagic>(_header);
       switch (format) {
       case Format::LittleEndianess64Bit:
-        if (Target::wordSize == sizeof(uint64_t) &&
-            std::is_same<Endianess, ADT::LittleEndianess>()) {
+        if (
+          Target::wordSize == sizeof(uint64_t) &&
+          std::is_same<Endianess, ADT::LittleEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
       case Format::LittleEndianess32Bit:
-        if (Target::wordSize == sizeof(uint32_t) &&
-            std::is_same<Endianess, ADT::LittleEndianess>()) {
+        if (
+          Target::wordSize == sizeof(uint32_t) &&
+          std::is_same<Endianess, ADT::LittleEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
       case Format::BigEndianess64Bit:
-        if (Target::wordSize == sizeof(uint64_t) &&
-            std::is_same<Endianess, ADT::BigEndianess>()) {
+        if (
+          Target::wordSize == sizeof(uint64_t) &&
+          std::is_same<Endianess, ADT::BigEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
       case Format::BigEndianess32Bit:
-        if (Target::wordSize == sizeof(uint32_t) &&
-            std::is_same<Endianess, ADT::BigEndianess>()) {
+        if (
+          Target::wordSize == sizeof(uint32_t) &&
+          std::is_same<Endianess, ADT::BigEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
@@ -456,14 +480,16 @@ private:
 
   public:
     DCL_ALWAYS_INLINE
-    VariantIterator(void *header) {
-      uint32_t magic = *(uint32_t *)header;
-      if (magic == MH_MAGIC || magic == MH_CIGAM || magic == MH_MAGIC_64 ||
-          magic == MH_CIGAM_64) {
+    explicit VariantIterator(void * header) {
+      uint32_t magic = *reinterpret_cast<uint32_t *>(header);
+      if (
+        magic == MH_MAGIC || magic == MH_CIGAM || magic == MH_MAGIC_64 ||
+        magic == MH_CIGAM_64) {
         machO = IteratorMachO(header);
         kind = SliceKind::MachO;
-      } else if (magic == FAT_MAGIC || magic == FAT_CIGAM ||
-                 magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64) {
+      } else if (
+        magic == FAT_MAGIC || magic == FAT_CIGAM || magic == FAT_MAGIC_64 ||
+        magic == FAT_CIGAM_64) {
         fat = IteratorFat(header);
         kind = SliceKind::Fat;
       } else {
@@ -473,11 +499,12 @@ private:
     }
 
     DCL_ALWAYS_INLINE
-    VariantIterator(IteratorFat fat) : fat(fat), kind(SliceKind::Fat) {}
+    explicit VariantIterator(IteratorFat fat)
+      : fat(fat), kind(SliceKind::Fat) {}
 
     DCL_ALWAYS_INLINE
-    VariantIterator(IteratorMachO machO)
-        : machO(machO), kind(SliceKind::MachO) {}
+    explicit VariantIterator(IteratorMachO machO)
+      : machO(machO), kind(SliceKind::MachO) {}
 
     DCL_ALWAYS_INLINE
     VariantIterator end() const {
@@ -490,7 +517,7 @@ private:
     }
 
     DCL_ALWAYS_INLINE
-    VariantIterator &operator++() {
+    VariantIterator& operator++() {
       switch (kind) {
       case SliceKind::Fat:
         fat.operator++();
@@ -556,10 +583,11 @@ public:
 
   public:
     DCL_ALWAYS_INLINE
-    Slice(IteratorFat fat): _fat(fat), _kind(SliceKind::Fat) {};
+    explicit Slice(IteratorFat fat) : _fat(fat), _kind(SliceKind::Fat){};
 
     DCL_ALWAYS_INLINE
-    Slice(IteratorMachO machO): _machO(machO), _kind(SliceKind::MachO) {};
+    explicit Slice(IteratorMachO machO)
+      : _machO(machO), _kind(SliceKind::MachO){};
 
     DCL_ALWAYS_INLINE
     SliceKind getKind() const { return _kind; }
@@ -576,14 +604,14 @@ public:
 
     template <typename Target, typename Endianess>
     DCL_ALWAYS_INLINE
-    MachO<Target, Endianess> *getMachO() {
+    MachO<Target, Endianess> * getMachO() {
       return const_cast<MachO<Target, Endianess> *>(
-          std::as_const(*this).getMachO<Target, Endianess>());
+        std::as_const(*this).getMachO<Target, Endianess>());
     }
 
     template <typename Target, typename Endianess>
     DCL_ALWAYS_INLINE
-    const MachO<Target, Endianess> *getMachO() const {
+    const MachO<Target, Endianess> * getMachO() const {
       switch (_kind) {
       case SliceKind::Fat:
         return _fat.getMachO<Target, Endianess>();
@@ -598,21 +626,22 @@ public:
   private:
     VariantIterator _variant;
 
-    Iterator(VariantIterator variant) : _variant(variant) {}
+    DCL_ALWAYS_INLINE
+    explicit Iterator(VariantIterator variant) : _variant(variant) {}
 
   public:
     DCL_ALWAYS_INLINE
-    Iterator(void *header) : _variant(header) {}
+    explicit Iterator(void * header) : _variant(header) {}
 
   public:
     DCL_ALWAYS_INLINE
-    Iterator &operator++() {
+    Iterator& operator++() {
       _variant.operator++();
       return *this;
     }
 
     DCL_ALWAYS_INLINE
-    Iterator operator++(int arg0) { return _variant.operator++(arg0); }
+    Iterator operator++(int) { return Iterator{_variant.operator++()}; }
 
     DCL_ALWAYS_INLINE
     bool operator==(Iterator other) const {
@@ -628,36 +657,36 @@ public:
     Slice operator*() const { return _variant.operator*(); }
 
     DCL_ALWAYS_INLINE
-    Iterator end() const { return Iterator { _variant.end() }; }
+    Iterator end() const { return Iterator{_variant.end()}; }
 
     DCL_ALWAYS_INLINE
-    static Iterator makeBegin(void *header) { return Iterator { header }; }
+    static Iterator makeBegin(void * header) { return Iterator{header}; }
 
     DCL_ALWAYS_INLINE
-    static Iterator makeEnd(void *header) { return Iterator { header }.end(); }
+    static Iterator makeEnd(void * header) { return Iterator{header}.end(); }
   };
 
 private:
-  void *_address;
+  void * _address;
 
 public:
   DCL_ALWAYS_INLINE
-  explicit MachOView(void *buffer) : _address(buffer) {}
+  explicit MachOView(void * buffer) : _address(buffer) {}
 
 #pragma mark - Accessing Raw Bytes
 
   DCL_ALWAYS_INLINE
-  const void *getBytes() {
+  const void * getBytes() {
     return const_cast<void *>(std::as_const(*this).getBytes());
   }
 
   DCL_ALWAYS_INLINE
-  const void *const getBytes() const { return _address; }
+  const void * const getBytes() const { return _address; }
 
 #pragma mark - Accessing Slices
 
   using value_type = Slice;
-  using reference = Slice &;
+  using reference = Slice&;
   using Iterator = Iterator;
   using ConstIterator = typename std::add_const<Iterator>::type;
 
@@ -683,15 +712,15 @@ public:
 
   template <typename Target, typename Endianess>
   DCL_ALWAYS_INLINE
-  MachO<Target, Endianess> *getMachO() {
+  MachO<Target, Endianess> * getMachO() {
     return const_cast<MachO<Target, Endianess> *>(
-        std::as_const(*this).getMachO<Target, Endianess>());
+      std::as_const(*this).getMachO<Target, Endianess>());
   }
 
   template <typename Target, typename Endianess>
   DCL_ALWAYS_INLINE
-  const MachO<Target, Endianess> *getMachO() const {
-    for (auto eachSlice : * this) {
+  const MachO<Target, Endianess> * getMachO() const {
+    for (auto eachSlice : *this) {
       auto machO = eachSlice.getMachO<Target, Endianess>();
       if (machO) {
         return machO;
@@ -701,12 +730,8 @@ public:
   }
 };
 
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin
 
 #endif // DCL_TARGET_OS_DARWIN
 
-#endif // DCL_BINARY_DARWIN_MACH_O_VIEW_H
+#endif // DCL_BINARY_DARWIN_MACHOVIEW_H

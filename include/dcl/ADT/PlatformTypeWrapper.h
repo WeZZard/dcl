@@ -12,15 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_ADT_PLATFORM_TYPE_WRAPPER_H
-#define DCL_ADT_PLATFORM_TYPE_WRAPPER_H
+#ifndef DCL_ADT_PLATFORMTYPEWRAPPER_H
+#define DCL_ADT_PLATFORMTYPEWRAPPER_H
 
 #include <dcl/ADT/ByteOrder.h>
 #include <dcl/Basic/Basic.h>
+#include <utility>
 
-namespace dcl {
-
-namespace ADT {
+namespace dcl::ADT {
 
 template <typename PlatformType, typename ByteOrder>
 class PlatformTypeWrapper {
@@ -31,16 +30,16 @@ private:
 public:
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  PlatformTypeWrapper(PlatformType platformValue) noexcept
-      : _platformValue(platformValue) {}
+  explicit PlatformTypeWrapper(PlatformType platformValue) noexcept
+    : _platformValue(platformValue) {}
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  PlatformType &getPlatformValue() noexcept { return _platformValue; }
+  PlatformType& getPlatformValue() noexcept { return _platformValue; }
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  const PlatformType &getPlatformValue() const noexcept {
+  const PlatformType& getPlatformValue() const noexcept {
     return _platformValue;
   }
 
@@ -51,14 +50,14 @@ public:
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  const uint8_t *getBase() noexcept { 
-    return const_cast<const uint8_t *>(std::as_const(*this).getBase()); 
+  const uint8_t * getBase() noexcept {
+    return const_cast<const uint8_t *>(std::as_const(*this).getBase());
   }
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  const uint8_t *const getBase() const noexcept { 
-    return reinterpret_cast<const uint8_t * const>(this); 
+  const uint8_t * const getBase() const noexcept {
+    return reinterpret_cast<const uint8_t * const>(this);
   }
 };
 
@@ -67,10 +66,9 @@ public:
   TYPE get##NAME() const {                                                     \
     if (std::is_same<ByteOrder, dcl::ADT::HostByteOrder>()) {                  \
       return static_cast<TYPE>(this->getPlatformValue().MEMBER);               \
-    } else {                                                                   \
-      return static_cast<TYPE>(                                                \
-          ByteOrder::swapToHost(this->getPlatformValue().MEMBER));             \
     }                                                                          \
+    return static_cast<TYPE>(                                                  \
+      ByteOrder::swapToHost(this->getPlatformValue().MEMBER));                 \
   }
 
 #define DCL_PLATFORM_TYPE_SETTER(TYPE, NAME, MEMBER)                           \
@@ -79,18 +77,15 @@ public:
     using MemberTy = decltype(this->getPlatformValue().MEMBER);                \
     if (std::is_same<ByteOrder, dcl::ADT::HostByteOrder>()) {                  \
       this->getPlatformValue().MEMBER = static_cast<MemberTy>(x);              \
-    } else {                                                                   \
-      this->getPlatformValue().MEMBER =                                        \
-          static_cast<MemberTy>(ByteOrder::swapFromHost(x));                   \
     }                                                                          \
+    this->getPlatformValue().MEMBER =                                          \
+      static_cast<MemberTy>(ByteOrder::swapFromHost(x));                       \
   }
 
 #define DCL_PLATFORM_TYPE_ACCESSOR(TYPE, NAME, MEMBER)                         \
   DCL_PLATFORM_TYPE_GETTER(TYPE, NAME, MEMBER)                                 \
   DCL_PLATFORM_TYPE_SETTER(TYPE, NAME, MEMBER)
 
-} // namespace ADT
+} // namespace dcl::ADT
 
-} // namespace dcl
-
-#endif // DCL_ADT_PLATFORM_TYPE_WRAPPER_H
+#endif // DCL_ADT_PLATFORMTYPEWRAPPER_H

@@ -18,19 +18,15 @@
 
 #if DCL_TARGET_OS_DARWIN
 
-#include <cstdint>
+#include <cstddef>
 #include <mach-o/fixup-chains.h>
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 
-namespace dcl {
+namespace dcl::Binary::Darwin {
 
-namespace Binary {
-
-namespace Darwin {
-
-enum class LoadCommandKind32: uint32_t;
-enum class LoadCommandKind64: uint32_t;
+enum class LoadCommandKind32 : uint32_t;
+enum class LoadCommandKind64 : uint32_t;
 
 template <class WordTy>
 class RemoteBase;
@@ -129,11 +125,7 @@ public:
   static const size_t wordSize = sizeof(PointerTy);
 };
 
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin
 
 #endif // DCL_TARGET_OS_DARWIN
 

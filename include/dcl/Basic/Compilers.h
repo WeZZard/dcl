@@ -6,7 +6,7 @@
 // Licensed under Apache 2.0 License
 //
 // See https://github.com/dcl-project/dcl/LICENSE.txt for license information
-// See https://github.com/dcl-project/dcl/graphs/contributors for the list of 
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
 // DCL project authors
 //
 //===----------------------------------------------------------------------===//
@@ -44,19 +44,19 @@
 /// Extend the default __GNUC_PREREQ even if glibc's features.h isn't
 /// available.
 #ifndef DCL_GNUC_PREREQ
-# if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__)
-#  define DCL_GNUC_PREREQ(maj, min, patch) \
-    ((__GNUC__ << 20) + (__GNUC_MINOR__ << 10) + __GNUC_PATCHLEVEL__ >= \
-     ((maj) << 20) + ((min) << 10) + (patch))
-# elif defined(__GNUC__) && defined(__GNUC_MINOR__)
-#  define DCL_GNUC_PREREQ(maj, min, patch) \
-    ((__GNUC__ << 20) + (__GNUC_MINOR__ << 10) >= ((maj) << 20) + ((min) << 10))
-# else
-#  define DCL_GNUC_PREREQ(maj, min, patch) 0
-# endif
+#if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__)
+#define DCL_GNUC_PREREQ(maj, min, patch)                                       \
+  ((__GNUC__ << 20) + (__GNUC_MINOR__ << 10) + __GNUC_PATCHLEVEL__ >=          \
+   ((maj) << 20) + ((min) << 10) + (patch))
+#elif defined(__GNUC__) && defined(__GNUC_MINOR__)
+#define DCL_GNUC_PREREQ(maj, min, patch)                                       \
+  ((__GNUC__ << 20) + (__GNUC_MINOR__ << 10) >= ((maj) << 20) + ((min) << 10))
+#else
+#define DCL_GNUC_PREREQ(maj, min, patch) 0
+#endif
 #endif
 
-/// DCL_NOINLINE - On compilers where we have a directive to do so, mark a 
+/// DCL_NOINLINE - On compilers where we have a directive to do so, mark a
 /// method "not for inlining".
 #if __has_attribute(noinline) || DCL_GNUC_PREREQ(3, 4, 0)
 #define DCL_NOINLINE __attribute__((noinline))
@@ -67,7 +67,7 @@
 #endif
 
 /// DCL_ALWAYS_INLINE - On compilers where we have a directive to do so, mark a
-/// method "always inline" because it is performance sensitive. GCC 3.4 
+/// method "always inline" because it is performance sensitive. GCC 3.4
 /// supported this but is buggy in various cases and produces unimplemented
 /// errors, just use it in GCC 4.0 and later.
 #if __has_attribute(always_inline) || DCL_GNUC_PREREQ(4, 0, 0)
@@ -105,10 +105,15 @@
 // };
 #ifdef NDEBUG
 #define DCL_ASSERT_ONLY_DECL(...)
-#define DCL_ASSERT_ONLY(...) do { } while (false)
+#define DCL_ASSERT_ONLY(...)                                                   \
+  do {                                                                         \
+  } while (false)
 #else
 #define DCL_ASSERT_ONLY_DECL(...) __VA_ARGS__
-#define DCL_ASSERT_ONLY(...) do { __VA_ARGS__; } while (false)
+#define DCL_ASSERT_ONLY(...)                                                   \
+  do {                                                                         \
+    __VA_ARGS__;                                                               \
+  } while (false)
 #endif
 
 #if defined(__LP64__) || defined(_WIN64)
@@ -121,14 +126,13 @@
 #endif
 
 // Produce a string literal for the raw argument tokens.
-#define DCL_STRINGIFY_RAW(TOK) #TOK
+#define DCL_STRINGIFY_RAW(TOK)      #TOK
 
 // Produce a string literal for the macro-expanded argument tokens.
 #define DCL_STRINGIFY_EXPANDED(TOK) DCL_STRINGIFY_RAW(TOK)
 
 #if defined(__USER_LABEL_PREFIX__)
-#define DCL_SYMBOL_PREFIX_STRING \
-  DCL_STRINGIFY_EXPANDED(__USER_LABEL_PREFIX__)
+#define DCL_SYMBOL_PREFIX_STRING DCL_STRINGIFY_EXPANDED(__USER_LABEL_PREFIX__)
 #else
 // Clang and GCC always define __USER_LABEL_PREFIX__, so this should
 // only come up with MSVC, and Windows doesn't use a prefix.
@@ -142,7 +146,7 @@
 // This only actually works on Clang or GCC; MSVC does not provide
 // an attribute to change the asm label.
 #define DCL_ASM_LABEL_RAW(STRING) __asm__(STRING)
-#define DCL_ASM_LABEL_WITH_PREFIX(STRING) \
+#define DCL_ASM_LABEL_WITH_PREFIX(STRING)                                      \
   DCL_ASM_LABEL_RAW(DCL_SYMBOL_PREFIX_STRING STRING)
 
 #define DCL_UNUSED __attribute__((unused))

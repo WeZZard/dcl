@@ -20,14 +20,10 @@
 
 #include <cstdint>
 
-namespace dcl {
-
-namespace Binary {
-
-namespace Darwin {
+namespace dcl::Binary::Darwin {
 
 DCL_ALWAYS_INLINE
-static uintptr_t readUleb128(const uint8_t *&p, const uint8_t *end) {
+static uintptr_t readUleb128(const uint8_t *& p, const uint8_t * end) {
   uint64_t result = 0;
   int bit = 0;
   do {
@@ -37,7 +33,7 @@ static uintptr_t readUleb128(const uint8_t *&p, const uint8_t *end) {
     uint64_t slice = *p & 0x7f;
     if (bit > 63) {
       dcl::preconditionFailure(
-          "uleb128 too big for uint64, bit=%d, result=0x%0llX\n", bit, result);
+        "uleb128 too big for uint64, bit=%d, result=0x%0llX\n", bit, result);
     } else {
       result |= (slice << bit);
       bit += 7;
@@ -47,7 +43,7 @@ static uintptr_t readUleb128(const uint8_t *&p, const uint8_t *end) {
 }
 
 DCL_ALWAYS_INLINE
-static intptr_t readSleb128(const uint8_t *&p, const uint8_t *end) {
+static intptr_t readSleb128(const uint8_t *& p, const uint8_t * end) {
   int64_t result = 0;
   int bit = 0;
   uint8_t byte;
@@ -56,20 +52,18 @@ static intptr_t readSleb128(const uint8_t *&p, const uint8_t *end) {
       dcl::preconditionFailure("malformed sleb128\n");
     }
     byte = *p++;
-    result |= (((int64_t)(byte & 0x7f)) << bit);
+    result |= ((static_cast<int64_t>(byte & 0x7f)) << bit);
     bit += 7;
   } while (byte & 0x80);
   // sign extend negative numbers
-  if ((byte & 0x40) != 0)
-    result |= (-1LL) << bit;
+  if ((byte & 0x40) != 0) {
+    static_assert(-1LL == UINT64_MAX);
+    result |= UINT64_MAX << bit;
+  }
   return result;
 }
 
-} // namespace Darwin
-
-} // namespace Binary
-
-} // namespace dcl
+} // namespace dcl::Binary::Darwin
 
 #endif // DCL_TARGET_OS_DARWIN
 
