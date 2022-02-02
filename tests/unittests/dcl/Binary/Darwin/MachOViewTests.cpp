@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <dcl/ADT/ByteOrder.h>
 #include <dcl/Binary/Darwin/Collections.h>
 #include <dcl/Binary/Darwin/Dyld/DyldFixupChains.h>
 #include <dcl/Binary/Darwin/Dyld/DyldInfo.h>
 #include <dcl/Binary/Darwin/MachOView.h>
 #include <dcl/IO/File.h>
+#include <dcl/Platform/ByteOrder.h>
 
 using namespace dcl::Binary::Darwin;
 
@@ -31,12 +31,12 @@ TEST(MachOView, empty_swift) {
   for (auto eachSlice : view) {
     switch (eachSlice.getMachOFormat()) {
     case Format::BigEndianess32Bit: {
-      eachSlice.getMachO<Remote<uint32_t>, dcl::ADT::BigEndianess>();
+      eachSlice.getMachO<Remote<uint32_t>, dcl::Platform::BigEndianess>();
       break;
     }
     case Format::BigEndianess64Bit: {
       auto machO =
-        eachSlice.getMachO<Remote<uint64_t>, dcl::ADT::BigEndianess>();
+        eachSlice.getMachO<Remote<uint64_t>, dcl::Platform::BigEndianess>();
       LoadCommandCollection loadCommands{machO->getHeader()};
       for (auto& eachLoadCommand : loadCommands) {
         auto command = eachLoadCommand.getCommand();
@@ -44,12 +44,12 @@ TEST(MachOView, empty_swift) {
       break;
     }
     case Format::LittleEndianess32Bit: {
-      eachSlice.getMachO<Remote<uint32_t>, dcl::ADT::LittleEndianess>();
+      eachSlice.getMachO<Remote<uint32_t>, dcl::Platform::LittleEndianess>();
       break;
     }
     case Format::LittleEndianess64Bit: {
       auto machO =
-        eachSlice.getMachO<Remote<uint64_t>, dcl::ADT::LittleEndianess>();
+        eachSlice.getMachO<Remote<uint64_t>, dcl::Platform::LittleEndianess>();
       LoadCommandCollection loadCommands{machO->getHeader()};
       for (auto& eachLoadCommand : loadCommands) {
         auto command = eachLoadCommand.getCommand();

@@ -1,5 +1,5 @@
 
-//===--- PlatformTypeWrapper.h - Platform Type Wrapper ----------*- C++ -*-===//
+//===--- TypeWrapper.h - Platform Type Wrapper ------------------*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
 //
@@ -12,40 +12,38 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_ADT_PLATFORMTYPEWRAPPER_H
-#define DCL_ADT_PLATFORMTYPEWRAPPER_H
+#ifndef DCL_PLATFORM_TYPEWRAPPER_H
+#define DCL_PLATFORM_TYPEWRAPPER_H
 
-#include <dcl/ADT/ByteOrder.h>
 #include <dcl/Basic/Basic.h>
+#include <dcl/Platform/ByteOrder.h>
 #include <utility>
 
-namespace dcl::ADT {
+namespace dcl::Platform {
 
-template <typename PlatformType, typename ByteOrder>
-class PlatformTypeWrapper {
+template <typename Wrapped, typename ByteOrder>
+class TypeWrapper {
 
 private:
-  PlatformType _platformValue;
+  Wrapped _wrappedValue;
 
 public:
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  explicit PlatformTypeWrapper(PlatformType platformValue) noexcept
-    : _platformValue(platformValue) {}
+  explicit TypeWrapper(Wrapped wrappedValue) noexcept
+    : _wrappedValue(wrappedValue) {}
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  PlatformType& getPlatformValue() noexcept { return _platformValue; }
+  Wrapped& getWrappedValue() noexcept { return _wrappedValue; }
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  const PlatformType& getPlatformValue() const noexcept {
-    return _platformValue;
-  }
+  const Wrapped& getWrappedValue() const noexcept { return _wrappedValue; }
 
   DCL_ALWAYS_INLINE
-  void setPlatformValue(PlatformType platformValue) noexcept {
-    _platformValue = platformValue;
+  void setWrappedValue(Wrapped wrappedValue) noexcept {
+    _wrappedValue = wrappedValue;
   }
 
   DCL_ALWAYS_INLINE
@@ -56,29 +54,29 @@ public:
 
   DCL_ALWAYS_INLINE
   DCL_CONSTEXPR
-  const uint8_t * const getBase() const noexcept {
-    return reinterpret_cast<const uint8_t * const>(this);
+  const uint8_t * getBase() const noexcept {
+    return reinterpret_cast<const uint8_t *>(this);
   }
 };
 
 #define DCL_PLATFORM_TYPE_GETTER(TYPE, NAME, MEMBER)                           \
   DCL_ALWAYS_INLINE                                                            \
   TYPE get##NAME() const {                                                     \
-    if (std::is_same<ByteOrder, dcl::ADT::HostByteOrder>()) {                  \
-      return static_cast<TYPE>(this->getPlatformValue().MEMBER);               \
+    if (std::is_same<ByteOrder, dcl::Platform::HostByteOrder>()) {             \
+      return static_cast<TYPE>(this->getWrappedValue().MEMBER);                \
     }                                                                          \
     return static_cast<TYPE>(                                                  \
-      ByteOrder::swapToHost(this->getPlatformValue().MEMBER));                 \
+      ByteOrder::swapToHost(this->getWrappedValue().MEMBER));                  \
   }
 
 #define DCL_PLATFORM_TYPE_SETTER(TYPE, NAME, MEMBER)                           \
   DCL_ALWAYS_INLINE                                                            \
   void set##NAME(TYPE x) {                                                     \
-    using MemberTy = decltype(this->getPlatformValue().MEMBER);                \
-    if (std::is_same<ByteOrder, dcl::ADT::HostByteOrder>()) {                  \
-      this->getPlatformValue().MEMBER = static_cast<MemberTy>(x);              \
+    using MemberTy = decltype(this->getWrappedValue().MEMBER);                 \
+    if (std::is_same<ByteOrder, dcl::Platform::HostByteOrder>()) {             \
+      this->getWrappedValue().MEMBER = static_cast<MemberTy>(x);               \
     }                                                                          \
-    this->getPlatformValue().MEMBER =                                          \
+    this->getWrappedValue().MEMBER =                                           \
       static_cast<MemberTy>(ByteOrder::swapFromHost(x));                       \
   }
 
@@ -86,6 +84,6 @@ public:
   DCL_PLATFORM_TYPE_GETTER(TYPE, NAME, MEMBER)                                 \
   DCL_PLATFORM_TYPE_SETTER(TYPE, NAME, MEMBER)
 
-} // namespace dcl::ADT
+} // namespace dcl::Platform
 
-#endif // DCL_ADT_PLATFORMTYPEWRAPPER_H
+#endif // DCL_PLATFORM_TYPEWRAPPER_H

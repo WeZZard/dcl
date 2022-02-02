@@ -226,7 +226,7 @@ public:
   Section<Target, ByteOrder> * get() { return _section; }
 
   DCL_ALWAYS_INLINE
-  Section<Target, ByteOrder> * const get() const { return _section; }
+  const Section<Target, ByteOrder> * get() const { return _section; }
 
   DCL_ALWAYS_INLINE
   void advance(difference_type distance) { _section = get() + distance; }

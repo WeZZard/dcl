@@ -11,15 +11,15 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_ADT_BYTEORDER_H
-#define DCL_ADT_BYTEORDER_H
+#ifndef DCL_PLATFORM_BYTEORDER_H
+#define DCL_PLATFORM_BYTEORDER_H
 
 #include <dcl/Basic/Basic.h>
 
 #include <cstdint>
 #include <limits>
 
-namespace dcl::ADT {
+namespace dcl::Platform {
 
 namespace details {
 
@@ -162,6 +162,6 @@ uint64_t SwapHostToBig(uint64_t x) { return OSSwapHostToBigInt64(x); }
 
 #endif // DCL_TARGET_OS_DARWIN
 
-} // namespace dcl::ADT
+} // namespace dcl::Platform
 
-#endif // DCL_ADT_BYTEORDER_H
+#endif // DCL_PLATFORM_BYTEORDER_H

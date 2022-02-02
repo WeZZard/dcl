@@ -19,9 +19,10 @@
 #if DCL_TARGET_OS_DARWIN
 
 #include <cstdint>
-#include <dcl/ADT/PlatformTypeWrapper.h>
 #include <iterator>
 #include <mach-o/fat.h>
+
+#include <dcl/Platform/TypeWrapper.h>
 
 namespace dcl {
 
@@ -31,7 +32,7 @@ namespace Darwin {
 
 template <typename Target, typename ByteOrder>
 class FatHeader
-  : public ADT::PlatformTypeWrapper<typename Target::FatHeaderTy, ByteOrder> {
+  : public Platform::TypeWrapper<typename Target::FatHeaderTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, Magic, magic);
@@ -40,7 +41,7 @@ public:
 };
 template <typename Target, typename ByteOrder>
 class FatArch
-  : public ADT::PlatformTypeWrapper<typename Target::FatArchTy, ByteOrder> {
+  : public Platform::TypeWrapper<typename Target::FatArchTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, Offset, offset);
@@ -63,37 +64,37 @@ public:
 
   FatHeader<Target, Endianess> * getHeader() { return &_header; }
 
-  const FatHeader<Target, Endianess> * const getHeader() const {
-    return &_header;
-  }
+  const FatHeader<Target, Endianess> * getHeader() const { return &_header; }
 
   using Iterator = FatArch<Target, Endianess> *;
-  using ConstIterator = typename std::add_const<Iterator>::type;
+  using ConstIterator = const FatArch<Target, Endianess> *;
 
   DCL_ALWAYS_INLINE
   Iterator begin() {
-    return Iterator{getHeader()->getBase() + (uintptr_t)sizeof(getHeader())};
+    return const_cast<Iterator>(std::as_const(*this).begin());
   }
 
   DCL_ALWAYS_INLINE
-  Iterator end() { return begin() + getHeader()->getArchCount(); }
+  Iterator end() { return const_cast<Iterator>(std::as_const(*this).end()); }
 
   DCL_ALWAYS_INLINE
   const Iterator begin() const {
-    return (Iterator)getHeader()->getBase() + (uintptr_t)sizeof(getHeader());
+    return const_cast<Iterator>(std::as_const(*this).begin());
   }
 
   DCL_ALWAYS_INLINE
-  const Iterator end() const { return begin() + getHeader()->getArchCount(); }
+  const Iterator end() const {
+    return const_cast<Iterator>(std::as_const(*this).end());
+  }
 
   DCL_ALWAYS_INLINE
   ConstIterator cbegin() const {
-    return (ConstIterator)getHeader()->getBase() +
-           (uintptr_t)sizeof(getHeader());
+    return reinterpret_cast<ConstIterator>(
+      getHeader()->getBase() + (uintptr_t)sizeof(getHeader()));
   }
 
   DCL_ALWAYS_INLINE
-  ConstIterator cend() const { return begin() + getHeader()->getArchCount(); }
+  ConstIterator cend() const { return cbegin() + getHeader()->getArchCount(); }
 
   DCL_ALWAYS_INLINE
   FatArch<Target, Endianess>& at(uint32_t index) { return *(begin() + index); }

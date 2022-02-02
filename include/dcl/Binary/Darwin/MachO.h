@@ -18,9 +18,9 @@
 
 #if DCL_TARGET_OS_DARWIN
 
-#include <dcl/ADT/PlatformTypeWrapper.h>
 #include <dcl/Binary/Darwin/Targets.h>
 #include <dcl/Binary/Darwin/Traits.h>
+#include <dcl/Platform/TypeWrapper.h>
 
 #include <cstdint>
 #include <mach-o/loader.h>
@@ -35,7 +35,7 @@ namespace Darwin {
 
 template <typename Target, typename ByteOrder>
 class Dylib
-  : public ADT::PlatformTypeWrapper<typename Target::DylibTy, ByteOrder> {
+  : public Platform::TypeWrapper<typename Target::DylibTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(lc_str, Name, name);
@@ -159,7 +159,7 @@ enum class LoadCommandKind64 : uint32_t {
 
 template <typename Target, typename ByteOrder>
 class MachHeader
-  : public ADT::PlatformTypeWrapper<typename Target::MachHeaderTy, ByteOrder> {
+  : public Platform::TypeWrapper<typename Target::MachHeaderTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, Magic, magic);
@@ -174,7 +174,7 @@ public:
 #pragma mark - Load Commands
 
 template <typename Derived>
-class LoadCommandBase : public ADT::PlatformTypeWrapper<
+class LoadCommandBase : public Platform::TypeWrapper<
                           typename LoadCommandTraits<Derived>::CommandTy,
                           typename LoadCommandTraits<Derived>::ByteOrderTy> {
 
@@ -189,11 +189,11 @@ public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, CommandSize, cmdsize);
 
 protected:
-  const char * getString(const union lc_str& str) {
-    return const_cast<const char *>(std::as_const(*this).getString());
+  char * getString(const union lc_str& str) {
+    return const_cast<char *>(std::as_const(*this).getString());
   }
 
-  const char * const getString(const union lc_str& str) const {
+  const char * getString(const union lc_str& str) const {
 #ifndef __LP64__
     return str.ptr;
 #else
@@ -270,23 +270,23 @@ public:
   DCL_ALWAYS_INLINE
   const Dylib<Target, ByteOrder>& getDylib() const {
     return *reinterpret_cast<const Dylib<Target, ByteOrder> *>(
-      &this->getPlatformValue().dylib);
+      &this->getWrappedValue().dylib);
   }
 
   DCL_ALWAYS_INLINE
   Dylib<Target, ByteOrder>& getDylib() {
     return *reinterpret_cast<Dylib<Target, ByteOrder> *>(
-      &this->getPlatformValue().dylib);
+      &this->getWrappedValue().dylib);
   }
 
   DCL_ALWAYS_INLINE
   const char * getDylibName() {
-    return this->getString(this->getPlatformValue().dylib.name);
+    return this->getString(this->getWrappedValue().dylib.name);
   }
 
   DCL_ALWAYS_INLINE
-  const char * const getDylibName() const {
-    return this->getString(this->getPlatformValue().dylib.name);
+  const char * getDylibName() const {
+    return this->getString(this->getWrappedValue().dylib.name);
   }
 };
 
@@ -294,13 +294,11 @@ template <typename Target, typename ByteOrder>
 class RPathCommand : public LoadCommandBase<RPathCommand<Target, ByteOrder>> {
 public:
   DCL_ALWAYS_INLINE
-  const char * getPath() {
-    return this->getString(this->getPlatformValue().path);
-  }
+  char * getPath() { return this->getString(this->getWrappedValue().path); }
 
   DCL_ALWAYS_INLINE
-  const char * const getPath() const {
-    return this->getString(this->getPlatformValue().path);
+  const char * getPath() const {
+    return this->getString(this->getWrappedValue().path);
   }
 };
 
@@ -331,7 +329,7 @@ public:
 
 template <typename Target, typename ByteOrder>
 class Section
-  : public ADT::PlatformTypeWrapper<typename Target::SectionTy, ByteOrder> {
+  : public Platform::TypeWrapper<typename Target::SectionTy, ByteOrder> {
 
 public:
   using PointerValueTy = typename Target::PointerValueTy;

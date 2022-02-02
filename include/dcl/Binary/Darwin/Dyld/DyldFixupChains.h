@@ -18,10 +18,10 @@
 
 #if DCL_TARGET_OS_DARWIN
 
-#include <dcl/ADT/PlatformTypeWrapper.h>
 #include <dcl/Binary/Darwin/Dyld/Traits.h>
 #include <dcl/Binary/Darwin/Iterators.h>
 #include <dcl/Binary/Darwin/MachO.h>
+#include <dcl/Platform/TypeWrapper.h>
 
 #include <cstdint>
 #include <utility>
@@ -65,9 +65,9 @@ template <typename Target, typename ByteOrder>
 class ChainedStartsInImage;
 
 template <typename Target, typename ByteOrder>
-class ChainedFixupsHeader : public ADT::PlatformTypeWrapper<
-                              typename Target::DyldChainedFixupsHeaderTy,
-                              ByteOrder> {
+class ChainedFixupsHeader
+  : public Platform::
+      TypeWrapper<typename Target::DyldChainedFixupsHeaderTy, ByteOrder> {
 public:
   using ImportFormat = ChainedImportFormat;
   using SymbolFormat = ChainedSymbolFormat;
@@ -104,28 +104,28 @@ template <typename Target, typename ByteOrder>
 class ChainedStartsInSegment;
 
 template <typename Target, typename ByteOrder>
-class ChainedStartsInImage : public ADT::PlatformTypeWrapper<
-                               typename Target::DyldChainedStartsInImageTy,
-                               ByteOrder> {
+class ChainedStartsInImage
+  : public Platform::
+      TypeWrapper<typename Target::DyldChainedStartsInImageTy, ByteOrder> {
 
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, SegmentCount, seg_count);
 
   DCL_ALWAYS_INLINE
   uint32_t getSegmentInfoOffsetAtIndex(uint32_t index) {
-    return this->getPlatformValue().seg_info_offset[index];
+    return this->getWrappedValue().seg_info_offset[index];
   }
 
   DCL_ALWAYS_INLINE
   uint32_t getSegmentInfoOffsetAtIndex(uint32_t index) const {
-    return this->getPlatformValue().seg_info_offset[index];
+    return this->getWrappedValue().seg_info_offset[index];
   }
 };
 
 template <typename Target, typename ByteOrder>
-class ChainedStartsInSegment : public ADT::PlatformTypeWrapper<
-                                 typename Target::DyldChainedStartsInSegmentTy,
-                                 ByteOrder> {
+class ChainedStartsInSegment
+  : public Platform::
+      TypeWrapper<typename Target::DyldChainedStartsInSegmentTy, ByteOrder> {
 public:
   using PointerFormat = ChainedPointerFormat;
 
@@ -144,16 +144,16 @@ public:
 
   DCL_ALWAYS_INLINE
   uint16_t getPageStartAtIndex(uint16_t index) const {
-    return this->getPlatformValue().page_start[index];
+    return this->getWrappedValue().page_start[index];
   }
 };
 
 #pragma mark - Chained Import
 
 template <typename ByteOrder>
-class ChainedImport : public ADT::PlatformTypeWrapper<
-                        ChainedImportTraits<ChainedImport<ByteOrder>>,
-                        ByteOrder> {
+class ChainedImport
+  : public Platform::
+      TypeWrapper<ChainedImportTraits<ChainedImport<ByteOrder>>, ByteOrder> {
 public:
   DCL_PLATFORM_TYPE_GETTER(uint32_t, LibraryOrdinal, lib_ordinal);
 
@@ -164,7 +164,7 @@ public:
 
 template <typename ByteOrder>
 class ChainedImportAddend
-  : public ADT::PlatformTypeWrapper<
+  : public Platform::TypeWrapper<
       ChainedImportTraits<ChainedImportAddend<ByteOrder>>,
       ByteOrder> {
 public:
@@ -179,7 +179,7 @@ public:
 
 template <typename ByteOrder>
 class ChainedImportAddend64
-  : public ADT::PlatformTypeWrapper<
+  : public Platform::TypeWrapper<
       ChainedImportTraits<ChainedImportAddend64<ByteOrder>>,
       ByteOrder> {
 public:
@@ -220,7 +220,7 @@ public:
   ChainedImport * get() { return _import; }
 
   DCL_ALWAYS_INLINE
-  ChainedImport * const get() const { return _import; }
+  const ChainedImport * get() const { return _import; }
 
   DCL_ALWAYS_INLINE
   void advance(difference_type distance) { _import += distance; }
@@ -636,8 +636,7 @@ public:
   }
 
   DCL_ALWAYS_INLINE
-  const ChainedStartsInSegment<Target, ByteOrder> * const
-  getStartsInSegment() const {
+  const ChainedStartsInSegment<Target, ByteOrder> * getStartsInSegment() const {
     return _startsInSegment;
   }
 };

@@ -90,10 +90,10 @@ public:
 
 #if DEBUG
   DCL_ALWAYS_INLINE
-  const char * getPath() noexcept { return _path; }
+  char * getPath() noexcept { return _path; }
 
   DCL_ALWAYS_INLINE
-  const char * const getPath() const noexcept { return _path; }
+  const char * getPath() const noexcept { return _path; }
 #endif
 };
 

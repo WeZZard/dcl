@@ -18,10 +18,10 @@
 
 #if DCL_TARGET_OS_DARWIN
 
-#include <dcl/ADT/PlatformTypeWrapper.h>
 #include <dcl/Binary/Darwin/Fat.h>
 #include <dcl/Binary/Darwin/Format.h>
 #include <dcl/Binary/Darwin/MachO.h>
+#include <dcl/Platform/TypeWrapper.h>
 
 #include <cstdint>
 #include <iterator>
@@ -163,35 +163,35 @@ public:
 
   template <typename T, typename E>
   DCL_ALWAYS_INLINE
-  MachO<T, E> * getMachHeaderAt(uint32_t index) const {
-    void * machOHeader = getMachHeaderAt(index);
+  const MachO<T, E> * getMachHeaderAt(uint32_t index) const {
+    const void * machOHeader = getMachHeaderAt(index);
     switch (GetFormatWithBytes<MachOMagic>(getMachHeaderAt(index))) {
     case Format::LittleEndianess64Bit:
       if (
         T::wordSize == sizeof(uint64_t) &&
-        std::is_same<E, ADT::LittleEndianess>()) {
-        return reinterpret_cast<MachO<T, E> *>(machOHeader);
+        std::is_same<E, Platform::LittleEndianess>()) {
+        return reinterpret_cast<const MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::LittleEndianess32Bit:
       if (
         T::wordSize == sizeof(uint32_t) &&
-        std::is_same<E, ADT::LittleEndianess>()) {
-        return reinterpret_cast<MachO<T, E> *>(machOHeader);
+        std::is_same<E, Platform::LittleEndianess>()) {
+        return reinterpret_cast<const MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::BigEndianess64Bit:
       if (
         T::wordSize == sizeof(uint64_t) &&
-        std::is_same<E, ADT::BigEndianess>()) {
-        return reinterpret_cast<MachO<T, E> *>(machOHeader);
+        std::is_same<E, Platform::BigEndianess>()) {
+        return reinterpret_cast<const MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::BigEndianess32Bit:
       if (
         T::wordSize == sizeof(uint32_t) &&
-        std::is_same<E, ADT::BigEndianess>()) {
-        return reinterpret_cast<MachO<T, E> *>(machOHeader);
+        std::is_same<E, Platform::BigEndianess>()) {
+        return reinterpret_cast<const MachO<T, E> *>(machOHeader);
       }
       break;
     case Format::Unknown:
@@ -287,19 +287,23 @@ private:
     Format getMachOFormat() const {
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
-        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint64_t>, Platform::LittleEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::LittleEndianess32Bit: {
-        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint32_t>, Platform::BigEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::BigEndianess64Bit: {
-        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint64_t>, Platform::LittleEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::BigEndianess32Bit: {
-        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint32_t>, Platform::BigEndianess>(_header);
         return fat.getMachOFormatAt(_index);
       }
       case Format::Unknown:
@@ -319,19 +323,23 @@ private:
     const MachO<Target, Endianess> * getMachO() const {
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
-        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint64_t>, Platform::LittleEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       case Format::LittleEndianess32Bit: {
-        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint32_t>, Platform::BigEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       case Format::BigEndianess64Bit: {
-        auto fat = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint64_t>, Platform::LittleEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       case Format::BigEndianess32Bit: {
-        auto fat = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header);
+        auto fat =
+          Fat<details::File<uint32_t>, Platform::BigEndianess>(_header);
         return fat.getMachHeaderAt<Target, Endianess>(_index);
       }
       default:
@@ -344,23 +352,27 @@ private:
       uint32_t archCount;
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
-        archCount = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header)
-                      .getArchCount();
+        archCount =
+          Fat<details::File<uint64_t>, Platform::LittleEndianess>(_header)
+            .getArchCount();
         break;
       }
       case Format::LittleEndianess32Bit: {
-        archCount = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header)
-                      .getArchCount();
+        archCount =
+          Fat<details::File<uint32_t>, Platform::BigEndianess>(_header)
+            .getArchCount();
         break;
       }
       case Format::BigEndianess64Bit: {
-        archCount = Fat<details::File<uint64_t>, ADT::LittleEndianess>(_header)
-                      .getArchCount();
+        archCount =
+          Fat<details::File<uint64_t>, Platform::LittleEndianess>(_header)
+            .getArchCount();
         break;
       }
       case Format::BigEndianess32Bit: {
-        archCount = Fat<details::File<uint32_t>, ADT::BigEndianess>(_header)
-                      .getArchCount();
+        archCount =
+          Fat<details::File<uint32_t>, Platform::BigEndianess>(_header)
+            .getArchCount();
         break;
       }
       case Format::Unknown:
@@ -433,28 +445,28 @@ private:
       case Format::LittleEndianess64Bit:
         if (
           Target::wordSize == sizeof(uint64_t) &&
-          std::is_same<Endianess, ADT::LittleEndianess>()) {
+          std::is_same<Endianess, Platform::LittleEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
       case Format::LittleEndianess32Bit:
         if (
           Target::wordSize == sizeof(uint32_t) &&
-          std::is_same<Endianess, ADT::LittleEndianess>()) {
+          std::is_same<Endianess, Platform::LittleEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
       case Format::BigEndianess64Bit:
         if (
           Target::wordSize == sizeof(uint64_t) &&
-          std::is_same<Endianess, ADT::BigEndianess>()) {
+          std::is_same<Endianess, Platform::BigEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
       case Format::BigEndianess32Bit:
         if (
           Target::wordSize == sizeof(uint32_t) &&
-          std::is_same<Endianess, ADT::BigEndianess>()) {
+          std::is_same<Endianess, Platform::BigEndianess>()) {
           return reinterpret_cast<MachO<Target, Endianess> *>(_header);
         }
         break;
@@ -676,12 +688,12 @@ public:
 #pragma mark - Accessing Raw Bytes
 
   DCL_ALWAYS_INLINE
-  const void * getBytes() {
+  void * getBytes() {
     return const_cast<void *>(std::as_const(*this).getBytes());
   }
 
   DCL_ALWAYS_INLINE
-  const void * const getBytes() const { return _address; }
+  const void * getBytes() const { return _address; }
 
 #pragma mark - Accessing Slices
 

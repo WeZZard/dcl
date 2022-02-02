@@ -54,9 +54,9 @@ enum class Format : uint8_t {
 
 template <class Magic>
 DCL_ALWAYS_INLINE
-static Format GetFormatWithBytes(void * bytes) noexcept {
+static Format GetFormatWithBytes(const void * bytes) noexcept {
 
-  uint32_t magic = *static_cast<uint32_t *>(bytes);
+  const uint32_t magic = *static_cast<const uint32_t *>(bytes);
 
   if (Magic::little64 == magic) {
     return Format::LittleEndianess64Bit;
