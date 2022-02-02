@@ -20,7 +20,6 @@ StatementMacros:
   - DCL_ALWAYS_INLINE
   - DCL_NORETURN
   - DCL_UNUSED
-  - DCL_ALWAYS_INLINE
   - DCL_CONSTEXPR
 WhitespaceSensitiveMacros:
   - DCL_META_STRINGIFY
