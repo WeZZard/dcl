@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_OSX_SYSROOT "/Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk")
+# Assigning macOS build settings.
+execute_process(
+  COMMAND xcrun --sdk macosx --show-sdk-path
+  OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.7)
 
 project(dcl)
