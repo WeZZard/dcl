@@ -1,0 +1,78 @@
+//===--- Arch.def - Triple Definition Meta-Programming ----------*- C++ -*-===//
+//
+// This source file is part of the DCL open source project
+//
+// Copyright (c) 2022 Li Yu-Long and the DCL project authors
+// Licensed under Apache 2.0 License
+//
+// See https://github.com/dcl-project/dcl/LICENSE.txt for license information
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
+// DCL project authors
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef ARCH
+#define ARCH(NAME, PATTERN, DESCRIPTION)
+#endif
+
+ARCH(Unknown, *, Unkown architecture)
+ARCH(Arm, arm, arm)
+ARCH(Armeb, armeb, armeb)
+ARCH(Aarch64, aarch64, aarch64)
+ARCH(Aarch64_be, aarch64_be, aarch64_be)
+ARCH(Aarch64_32, aarch64_32, aarch64_32)
+ARCH(Arc, arc, arc)
+ARCH(Avr, avr, avr)
+ARCH(Bpfel, bpfel, bpfel)
+ARCH(Bpfeb, bpfeb, bpfeb)
+ARCH(Csky, csky, csky)
+ARCH(Hexagon, hexagon, hexagon)
+ARCH(M68k, m68k, m68k)
+ARCH(Mips, mips, mips)
+ARCH(Mipsel, mipsel, mipsel)
+ARCH(Mips64, mips64, mips64)
+ARCH(Mips64el, mips64el, mips64el)
+ARCH(Msp430, msp430, msp430)
+ARCH(Ppc, ppc, ppc)
+ARCH(Ppcle, ppcle, ppcle)
+ARCH(Ppc64, ppc64, ppc64)
+ARCH(Ppc64le, ppc64le, ppc64le)
+ARCH(R600, r600, r600)
+ARCH(Amdgcn, amdgcn, amdgcn)
+ARCH(Riscv32, riscv32, riscv32)
+ARCH(Riscv64, riscv64, riscv64)
+ARCH(Sparc, sparc, sparc)
+ARCH(Sparcv9, sparcv9, sparcv9)
+ARCH(Sparcel, sparcel, sparcel)
+ARCH(Systemz, systemz, systemz)
+ARCH(Tce, tce, tce)
+ARCH(Tcele, tcele, tcele)
+ARCH(Thumb, thumb, thumb)
+ARCH(Thumbeb, thumbeb, thumbeb)
+ARCH(X86, x86, x86)
+ARCH(X86_64, x86_64, x86_64)
+ARCH(Xcore, xcore, xcore)
+ARCH(Nvptx, nvptx, nvptx)
+ARCH(Nvptx64, nvptx64, nvptx64)
+ARCH(Le32, le32, le32)
+ARCH(Le64, le64, le64)
+ARCH(Amdil, amdil, amdil)
+ARCH(Amdil64, amdil64, amdil64)
+ARCH(Hsail, hsail, hsail)
+ARCH(Hsail64, hsail64, hsail64)
+ARCH(Spir, spir, spir)
+ARCH(Spir64, spir64, spir64)
+ARCH(Spirv32, spirv32, spirv32)
+ARCH(Spirv64, spirv64, spirv64)
+ARCH(Kalimba, kalimba, kalimba)
+ARCH(Shave, shave, shave)
+ARCH(Lanai, lanai, lanai)
+ARCH(Wasm32, wasm32, wasm32)
+ARCH(Wasm64, wasm64, wasm64)
+ARCH(Renderscript32, renderscript32, renderscript32)
+ARCH(Renderscript64, renderscript64, renderscript64)
+ARCH(Ve, ve, ve)
+
+#ifdef ARCH
+#undef ARCH
+#endif

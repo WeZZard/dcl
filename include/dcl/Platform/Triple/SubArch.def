@@ -1,0 +1,67 @@
+//===--- SubArch.def - Triple Definition Meta-Programming -------*- C++ -*-===//
+//
+// This source file is part of the DCL open source project
+//
+// Copyright (c) 2022 Li Yu-Long and the DCL project authors
+// Licensed under Apache 2.0 License
+//
+// See https://github.com/dcl-project/dcl/LICENSE.txt for license information
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
+// DCL project authors
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef SUB_ARCH
+#define SUB_ARCH(NAME, PATTERN, DESCRIPTION)
+#endif
+
+SUB_ARCH(NoSubArch, NoSubArch, No sub - architecture)
+SUB_ARCH(ARMSubArch_v9_3a, ARMSubArch_v9_3a, ARMSubArch_v9_3a)
+SUB_ARCH(ARMSubArch_v9_2a, ARMSubArch_v9_2a, ARMSubArch_v9_2a)
+SUB_ARCH(ARMSubArch_v9_1a, ARMSubArch_v9_1a, ARMSubArch_v9_1a)
+SUB_ARCH(ARMSubArch_v9, ARMSubArch_v9, ARMSubArch_v9)
+SUB_ARCH(ARMSubArch_v8_8a, ARMSubArch_v8_8a, ARMSubArch_v8_8a)
+SUB_ARCH(ARMSubArch_v8_7a, ARMSubArch_v8_7a, ARMSubArch_v8_7a)
+SUB_ARCH(ARMSubArch_v8_6a, ARMSubArch_v8_6a, ARMSubArch_v8_6a)
+SUB_ARCH(ARMSubArch_v8_5a, ARMSubArch_v8_5a, ARMSubArch_v8_5a)
+SUB_ARCH(ARMSubArch_v8_4a, ARMSubArch_v8_4a, ARMSubArch_v8_4a)
+SUB_ARCH(ARMSubArch_v8_3a, ARMSubArch_v8_3a, ARMSubArch_v8_3a)
+SUB_ARCH(ARMSubArch_v8_2a, ARMSubArch_v8_2a, ARMSubArch_v8_2a)
+SUB_ARCH(ARMSubArch_v8_1a, ARMSubArch_v8_1a, ARMSubArch_v8_1a)
+SUB_ARCH(ARMSubArch_v8, ARMSubArch_v8, ARMSubArch_v8)
+SUB_ARCH(ARMSubArch_v8r, ARMSubArch_v8r, ARMSubArch_v8r)
+SUB_ARCH(
+  ARMSubArch_v8m_baseline,
+  ARMSubArch_v8m_baseline,
+  ARMSubArch_v8m_baseline)
+SUB_ARCH(
+  ARMSubArch_v8m_mainline,
+  ARMSubArch_v8m_mainline,
+  ARMSubArch_v8m_mainline)
+SUB_ARCH(
+  ARMSubArch_v8_1m_mainline,
+  ARMSubArch_v8_1m_mainline,
+  ARMSubArch_v8_1m_mainline)
+SUB_ARCH(ARMSubArch_v7, ARMSubArch_v7, ARMSubArch_v7)
+SUB_ARCH(ARMSubArch_v7em, ARMSubArch_v7em, ARMSubArch_v7em)
+SUB_ARCH(ARMSubArch_v7m, ARMSubArch_v7m, ARMSubArch_v7m)
+SUB_ARCH(ARMSubArch_v7s, ARMSubArch_v7s, ARMSubArch_v7s)
+SUB_ARCH(ARMSubArch_v7k, ARMSubArch_v7k, ARMSubArch_v7k)
+SUB_ARCH(ARMSubArch_v7ve, ARMSubArch_v7ve, ARMSubArch_v7ve)
+SUB_ARCH(ARMSubArch_v6, ARMSubArch_v6, ARMSubArch_v6)
+SUB_ARCH(ARMSubArch_v6m, ARMSubArch_v6m, ARMSubArch_v6m)
+SUB_ARCH(ARMSubArch_v6k, ARMSubArch_v6k, ARMSubArch_v6k)
+SUB_ARCH(ARMSubArch_v6t2, ARMSubArch_v6t2, ARMSubArch_v6t2)
+SUB_ARCH(ARMSubArch_v5, ARMSubArch_v5, ARMSubArch_v5)
+SUB_ARCH(ARMSubArch_v5te, ARMSubArch_v5te, ARMSubArch_v5te)
+SUB_ARCH(ARMSubArch_v4t, ARMSubArch_v4t, ARMSubArch_v4t)
+SUB_ARCH(AArch64SubArch_arm64e, AArch64SubArch_arm64e, AArch64SubArch_arm64e)
+SUB_ARCH(KalimbaSubArch_v3, KalimbaSubArch_v3, KalimbaSubArch_v3)
+SUB_ARCH(KalimbaSubArch_v4, KalimbaSubArch_v4, KalimbaSubArch_v4)
+SUB_ARCH(KalimbaSubArch_v5, KalimbaSubArch_v5, KalimbaSubArch_v5)
+SUB_ARCH(MipsSubArch_r6, MipsSubArch_r6, MipsSubArch_r6)
+SUB_ARCH(PPCSubArch_spe, PPCSubArch_spe, PPCSubArch_spe)
+
+#ifdef SUB_ARCH
+#undef SUB_ARCH
+#endif

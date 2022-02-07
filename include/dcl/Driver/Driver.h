@@ -14,4 +14,10 @@
 #ifndef DCL_DRIVER_DRIVER_H
 #define DCL_DRIVER_DRIVER_H
 
+namespace dcl::Driver {
+
+class Suite {};
+
+} // namespace dcl::Driver
+
 #endif // DCL_DRIVER_DRIVER_H

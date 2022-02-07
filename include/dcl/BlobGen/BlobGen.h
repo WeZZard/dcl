@@ -15,6 +15,8 @@
 #define DCL_BLOBGEN_BLOBGEN_H
 
 #include <dcl/Basic/Basic.h>
+#include <dcl/Driver/Driver.h>
+#include <dcl/Platform/Triple.h>
 #include <string>
 #include <vector>
 
@@ -36,16 +38,16 @@ std::vector<std::string> getAllCompilerSuites();
 
 const char * getPath(
   const char * sourceFilePath,
-  const char * triple,
-  const char * compilerSuite,
+  dcl::Platform::Triple triple,
+  dcl::Driver::Suite compilerSuite,
   ... // additional compiler args
 );
 
 const char * getPath(
   const char ** sourceFilePaths,
   size_t sourceFileCount,
-  const char * triple,
-  const char * compilerSuite,
+  dcl::Platform::Triple triple,
+  dcl::Driver::Suite compilerSuite,
   ... // additional compiler args
 );
 

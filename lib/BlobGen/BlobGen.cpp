@@ -18,8 +18,8 @@ namespace dcl::BlobGen {
 const char * getPathv(
   const char ** sourceFilePaths,
   size_t sourceFileCount,
-  const char * triple,
-  const char * compilerSuite,
+  dcl::Platform::Triple triple,
+  dcl::Driver::Suite compilerSuite,
   va_list compilerArgs);
 
 std::vector<std::string> getAllTriples() { return {}; }
@@ -28,8 +28,8 @@ std::vector<std::string> getAllCompilerSuites() { return {}; }
 
 const char * getPath(
   const char * sourceFilePath,
-  const char * triple,
-  const char * compilerSuite,
+  dcl::Platform::Triple triple,
+  dcl::Driver::Suite compilerSuite,
   ...) {
   va_list compilerArgs;
   va_start(compilerArgs, compilerSuite);
@@ -42,8 +42,8 @@ const char * getPath(
 const char * getPath(
   const char ** sourceFilePaths,
   size_t sourceFileCount,
-  const char * triple,
-  const char * compilerSuite,
+  dcl::Platform::Triple triple,
+  dcl::Driver::Suite compilerSuite,
   ...) {
   va_list compilerArgs;
   va_start(compilerArgs, compilerSuite);
@@ -56,8 +56,8 @@ const char * getPath(
 const char * getPathv(
   const char ** sourceFilePaths,
   size_t sourceFileCount,
-  const char * triple,
-  const char * compilerSuite,
+  dcl::Platform::Triple triple,
+  dcl::Driver::Suite compilerSuite,
   va_list compilerArgs) {
   return nullptr;
 }

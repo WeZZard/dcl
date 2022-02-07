@@ -1,0 +1,39 @@
+//===--- Vendor.def - Triple Definition Meta-Programming --------*- C++ -*-===//
+//
+// This source file is part of the DCL open source project
+//
+// Copyright (c) 2022 Li Yu-Long and the DCL project authors
+// Licensed under Apache 2.0 License
+//
+// See https://github.com/dcl-project/dcl/LICENSE.txt for license information
+// See https://github.com/dcl-project/dcl/graphs/contributors for the list of
+// DCL project authors
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef VENDOR
+#define VENDOR(NAME, PATTERN, DESCRIPTION)
+#endif
+
+VENDOR(Unknown, *, Unknown vendor)
+VENDOR(Apple, Apple, Apple)
+VENDOR(PC, PC, PC)
+VENDOR(SCEI, SCEI, SCEI)
+VENDOR(Freescale, Freescale, Freescale)
+VENDOR(IBM, IBM, IBM)
+VENDOR(
+  ImaginationTechnologies,
+  ImaginationTechnologies,
+  ImaginationTechnologies)
+VENDOR(MipsTechnologies, MipsTechnologies, MipsTechnologies)
+VENDOR(NVIDIA, NVIDIA, NVIDIA)
+VENDOR(CSR, CSR, CSR)
+VENDOR(Myriad, Myriad, Myriad)
+VENDOR(AMD, AMD, AMD)
+VENDOR(Mesa, Mesa, Mesa)
+VENDOR(SUSE, SUSE, SUSE)
+VENDOR(OpenEmbedded, OpenEmbedded, OpenEmbedded)
+
+#ifdef VENDOR
+#undef VENDOR
+#endif

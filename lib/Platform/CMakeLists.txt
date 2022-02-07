@@ -1,1 +1,7 @@
-add_library(dclPlatform INTERFACE)
+include_directories(./)
+
+add_library(
+  dclPlatform
+  STATIC
+  Triple.cpp
+)
