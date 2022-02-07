@@ -1,4 +1,4 @@
-//===--- BlobGen.h - Blob Generator -----------------------------*- C++ -*-===//
+//===--- Driver.h - Compilers Driver ----------------------------*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
 //
@@ -11,7 +11,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DCL_BLOBGEN_BLOBGEN_H
-#define DCL_BLOBGEN_BLOBGEN_H
+#ifndef DCL_DRIVER_DRIVER_H
+#define DCL_DRIVER_DRIVER_H
 
-#endif // DCL_BLOBGEN_BLOBGEN_H
+#endif // DCL_DRIVER_DRIVER_H

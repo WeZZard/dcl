@@ -12,6 +12,7 @@ target_link_libraries(
   libdclBinary_unittests
   dclIO
   dclBinary
+  dclBlobGen
   gtest_main
 )
 

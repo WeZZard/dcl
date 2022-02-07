@@ -5,3 +5,9 @@ add_library(
   STATIC
   BlobGen.cpp
 )
+
+target_link_libraries(
+  dclBlobGen
+  dclPlatform
+  dclDriver
+)

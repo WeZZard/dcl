@@ -1,4 +1,4 @@
-//===--- RuntimeAssertions.cpp - Runtime Assertion Utilieise ------*- C++ -*-===//
+//===--- RuntimeAssertions.cpp - Runtime Assertion Utilieise ----*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
 //
@@ -22,7 +22,7 @@ namespace dcl {
 namespace {
 
 DCL_ALWAYS_INLINE
-void assertv(bool predicate, const char *__restrict format, va_list args) {
+void assertv(bool predicate, const char * __restrict format, va_list args) {
 #if DEBUG
   if (!predicate) {
     vprintf(format, args);
@@ -32,8 +32,10 @@ void assertv(bool predicate, const char *__restrict format, va_list args) {
 }
 
 DCL_ALWAYS_INLINE
-void preconditionv(bool predicate, const char *__restrict format,
-                   va_list args) {
+void preconditionv(
+  bool predicate,
+  const char * __restrict format,
+  va_list args) {
   if (!predicate) {
     vprintf(format, args);
     abort();
@@ -42,21 +44,21 @@ void preconditionv(bool predicate, const char *__restrict format,
 
 DCL_ALWAYS_INLINE
 DCL_NORETURN
-void preconditionFailurev(const char *__restrict format, va_list args) {
+void preconditionFailurev(const char * __restrict format, va_list args) {
   vprintf(format, args);
   abort();
 }
 
 DCL_ALWAYS_INLINE
 DCL_NORETURN
-void unreachablev(const char *__restrict format, va_list args) {
+void unreachablev(const char * __restrict format, va_list args) {
   vprintf(format, args);
   abort();
 }
 
 } // namespace
 
-void _assert(bool predicate, const char *__restrict format, ...) {
+void _assert(bool predicate, const char * __restrict format, ...) {
 #if DEBUG
   va_list args;
   va_start(args, format);
@@ -71,25 +73,23 @@ void _assert(bool predicate) {
 #endif
 }
 
-void precondition(bool predicate, const char *format, ...) {
+void precondition(bool predicate, const char * format, ...) {
   va_list args;
   va_start(args, format);
   preconditionv(predicate, format, args);
   va_end(args);
 }
 
-void preconditionFailure(const char *__restrict format, ...) {
+void preconditionFailure(const char * __restrict format, ...) {
   va_list args;
   va_start(args, format);
   preconditionFailurev(format, args);
   va_end(args);
 }
 
-void unreachable() { 
-  unreachable("Unreachable branch.");
- }
+void unreachable() { unreachable("Unreachable branch."); }
 
-void unreachable(const char *__restrict format, ...) {
+void unreachable(const char * __restrict format, ...) {
   va_list args;
   va_start(args, format);
   unreachablev(format, args);

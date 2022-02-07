@@ -1,4 +1,3 @@
-
 //===--- TypeWrapper.h - Platform Type Wrapper ------------------*- C++ -*-===//
 //
 // This source file is part of the DCL open source project
