@@ -33,7 +33,7 @@ public:
    */
   static Arch getArch(const char *);
 
-  enum class SubArch {
+  enum class SubArch : uint8_t {
 #define SUB_ARCH(NAME, _2, _3) NAME,
 #include <dcl/Platform/Triple/SubArch.def>
   };
@@ -45,7 +45,7 @@ public:
    */
   static SubArch getSubArch(const char *);
 
-  enum class Vendor {
+  enum class Vendor : uint8_t {
 #define VENDOR(NAME, _2, _3) NAME,
 #include <dcl/Platform/Triple/Vendor.def>
   };
@@ -57,7 +57,7 @@ public:
    */
   static Vendor getVendor(const char *);
 
-  enum class OS {
+  enum class OS : uint8_t {
 #define OS(NAME, _2, _3) NAME,
 #include <dcl/Platform/Triple/OS.def>
   };
