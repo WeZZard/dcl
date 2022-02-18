@@ -4,7 +4,7 @@
 
 namespace dcl::Platform {
 
-Triple::Arch Triple::getArch(const char * string) {
+Triple::Arch Triple::getArch(const char * string) noexcept {
 #define ARCH(NAME, PATTERN, _3)                                                \
   if (strcmp(string, #PATTERN) == 0) {                                         \
     return Triple::Arch::NAME;                                                 \
@@ -13,7 +13,7 @@ Triple::Arch Triple::getArch(const char * string) {
   return Triple::Arch::Unknown;
 }
 
-Triple::SubArch Triple::getSubArch(const char * string) {
+Triple::SubArch Triple::getSubArch(const char * string) noexcept {
 #define SUB_ARCH(NAME, PATTERN, _3)                                            \
   if (strcmp(string, #PATTERN) == 0) {                                         \
     return Triple::SubArch::NAME;                                              \
@@ -22,7 +22,7 @@ Triple::SubArch Triple::getSubArch(const char * string) {
   return Triple::SubArch::NoSubArch;
 }
 
-Triple::Vendor Triple::getVendor(const char * string) {
+Triple::Vendor Triple::getVendor(const char * string) noexcept {
 #define VENDOR(NAME, PATTERN, _3)                                              \
   if (strcmp(string, #PATTERN) == 0) {                                         \
     return Triple::Vendor::NAME;                                               \
@@ -31,7 +31,7 @@ Triple::Vendor Triple::getVendor(const char * string) {
   return Triple::Vendor::Unknown;
 }
 
-Triple::OS Triple::getOS(const char * string) {
+Triple::OS Triple::getOS(const char * string) noexcept {
 #define OS(NAME, PATTERN, _3)                                                  \
   if (strcmp(string, #PATTERN) == 0) {                                         \
     return Triple::OS::NAME;                                                   \

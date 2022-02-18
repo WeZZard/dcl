@@ -703,10 +703,10 @@ public:
   using ConstIterator = typename std::add_const<Iterator>::type;
 
   DCL_ALWAYS_INLINE
-  Iterator begin() { return Iterator::makeBegin(_address); }
+  Iterator begin() { return std::as_const(*this).begin(); }
 
   DCL_ALWAYS_INLINE
-  Iterator end() { return Iterator::makeEnd(_address); }
+  Iterator end() { return std::as_const(*this).end(); }
 
   DCL_ALWAYS_INLINE
   const Iterator begin() const { return cbegin(); }
@@ -715,10 +715,10 @@ public:
   const Iterator end() const { return cend(); }
 
   DCL_ALWAYS_INLINE
-  ConstIterator cbegin() const { return begin(); }
+  ConstIterator cbegin() const { return Iterator::makeBegin(_address); }
 
   DCL_ALWAYS_INLINE
-  ConstIterator cend() const { return end(); }
+  ConstIterator cend() const { return Iterator::makeEnd(_address); }
 
 #pragma mark - Accessing MachO Slice
 

@@ -16,7 +16,38 @@
 
 namespace dcl::Driver {
 
-class Suite {};
+class Configuration {
+public:
+};
+
+class Driver;
+
+/**
+ * @brief  Defines a suite of compiler driver.
+ *
+ */
+class Suite {
+private:
+  const char * _rootPath;
+
+public:
+  Driver makeDriver() const noexcept;
+};
+
+/**
+ * @brief Represents a compiler driver instance.
+ *
+ */
+class Driver {
+public:
+  /**
+   * @brief Compiles source code with given path.
+   *
+   * @param arguments Raw arguments sent to the compiler.
+   * @return const char* The path of compiled production.
+   */
+  const char * compile(const char * arguments) noexcept;
+};
 
 } // namespace dcl::Driver
 

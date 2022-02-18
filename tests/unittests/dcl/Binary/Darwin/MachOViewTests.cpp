@@ -51,7 +51,7 @@ TEST(MachOView, empty_swift) {
       auto machO =
         eachSlice.getMachO<Remote<uint64_t>, dcl::Platform::LittleEndianess>();
       LoadCommandCollection loadCommands{machO->getHeader()};
-      for (auto& eachLoadCommand : loadCommands) {
+      for (const auto& eachLoadCommand : loadCommands) {
         auto command = eachLoadCommand.getCommand();
       }
       break;

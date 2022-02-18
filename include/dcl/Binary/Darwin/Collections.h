@@ -46,10 +46,10 @@ public:
   using ConstIterator = typename std::add_const<Iterator>::type;
 
   DCL_ALWAYS_INLINE
-  Iterator begin() { return Iterator{std::as_const(*this).begin()}; }
+  Iterator begin() { return std::as_const(*this).begin(); }
 
   DCL_ALWAYS_INLINE
-  Iterator end() { return Iterator{std::as_const(*this).end()}; }
+  Iterator end() { return std::as_const(*this).end(); }
 
   DCL_ALWAYS_INLINE
   const Iterator begin() const { return cbegin(); }

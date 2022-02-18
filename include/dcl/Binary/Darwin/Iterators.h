@@ -195,8 +195,8 @@ public:
       _base = const_cast<LoadCommand<Target, ByteOrder> *>(
         reinterpret_cast<const LoadCommand<Target, ByteOrder> *>(
           loadCommand->getBase() + loadCommand->getCommandSize()));
+      distance--;
     }
-    distance--;
   }
 
   DCL_ALWAYS_INLINE

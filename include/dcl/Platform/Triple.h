@@ -31,7 +31,7 @@ public:
    *
    * @return Arch
    */
-  static Arch getArch(const char *);
+  static Arch getArch(const char *) noexcept;
 
   enum class SubArch : uint8_t {
 #define SUB_ARCH(NAME, _2, _3) NAME,
@@ -43,7 +43,7 @@ public:
    *
    * @return SubArch
    */
-  static SubArch getSubArch(const char *);
+  static SubArch getSubArch(const char *) noexcept;
 
   enum class Vendor : uint8_t {
 #define VENDOR(NAME, _2, _3) NAME,
@@ -55,7 +55,7 @@ public:
    *
    * @return Vendor
    */
-  static Vendor getVendor(const char *);
+  static Vendor getVendor(const char *) noexcept;
 
   enum class OS : uint8_t {
 #define OS(NAME, _2, _3) NAME,
@@ -67,7 +67,7 @@ public:
    *
    * @return OS
    */
-  static OS getOS(const char *);
+  static OS getOS(const char *) noexcept;
 
 private:
   Arch _arch;
@@ -79,7 +79,7 @@ private:
   OS _os;
 
 public:
-  Triple(Arch arch, SubArch subArch, Vendor vendor, OS os)
+  Triple(Arch arch, SubArch subArch, Vendor vendor, OS os) noexcept
     : _arch(arch), _subArch(subArch), _vendor(vendor), _os(os) {}
 };
 
