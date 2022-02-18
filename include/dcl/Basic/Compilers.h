@@ -164,4 +164,11 @@
 #define DCL_SCANF0_LIKE(FORMAT_ARG, FIRST_VAR_ARG)                             \
   __attribute__((__format__(__scanf__, FORMAT_ARG, FIRST_VAR_ARG)))
 
+#ifdef __LITTLE_ENDIAN__
+#define DCL_LITTLE_ENDIAN
+#endif
+#ifdef __BIG_ENDIAN__
+#define DCL_BIG_ENDIAN
+#endif
+
 #endif // DCL_BASIC_COMPILERS_H

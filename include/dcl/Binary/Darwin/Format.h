@@ -30,18 +30,18 @@ namespace Darwin {
 
 class FatMagic {
 public:
-  constexpr static const uint32_t big32 = FAT_MAGIC;
-  constexpr static const uint32_t little32 = FAT_CIGAM;
-  constexpr static const uint32_t big64 = FAT_MAGIC_64;
-  constexpr static const uint32_t little64 = FAT_CIGAM_64;
+  constexpr static const uint32_t kMagic = FAT_MAGIC;
+  constexpr static const uint32_t kCigam = FAT_CIGAM;
+  constexpr static const uint32_t kMagic64 = FAT_MAGIC_64;
+  constexpr static const uint32_t kCigam64 = FAT_CIGAM_64;
 };
 
 class MachOMagic {
 public:
-  constexpr static const uint32_t big32 = MH_MAGIC;
-  constexpr static const uint32_t little32 = MH_CIGAM;
-  constexpr static const uint32_t big64 = MH_MAGIC_64;
-  constexpr static const uint32_t little64 = MH_CIGAM_64;
+  constexpr static const uint32_t kMagic = MH_MAGIC;
+  constexpr static const uint32_t kCigam = MH_CIGAM;
+  constexpr static const uint32_t kMagic64 = MH_MAGIC_64;
+  constexpr static const uint32_t kCigam64 = MH_CIGAM_64;
 };
 
 enum class Format : uint8_t {
@@ -55,24 +55,43 @@ enum class Format : uint8_t {
 template <class Magic>
 DCL_ALWAYS_INLINE
 static Format GetFormatWithBytes(const void * bytes) noexcept {
-
   const uint32_t magic = *static_cast<const uint32_t *>(bytes);
 
-  if (Magic::little64 == magic) {
-    return Format::LittleEndianess64Bit;
-  }
-
-  if (Magic::big64 == magic) {
-    return Format::BigEndianess64Bit;
-  }
-
-  if (Magic::little32 == magic) {
+#if defined(DCL_LITTLE_ENDIAN)
+  if (Magic::kMagic == magic) {
     return Format::LittleEndianess32Bit;
   }
 
-  if (Magic::big32 == magic) {
+  if (Magic::kCigam == magic) {
     return Format::BigEndianess32Bit;
   }
+
+  if (Magic::kMagic64 == magic) {
+    return Format::LittleEndianess64Bit;
+  }
+
+  if (Magic::kCigam64 == magic) {
+    return Format::BigEndianess64Bit;
+  }
+#elif defined(DCL_BIG_ENDIAN)
+  if (Magic::kMagic == magic) {
+    return Format::BigEndianess32Bit;
+  }
+
+  if (Magic::kCigam == magic) {
+    return Format::LittleEndianess32Bit;
+  }
+
+  if (Magic::kMagic64 == magic) {
+    return Format::BigEndianess64Bit;
+  }
+
+  if (Magic::kCigam64 == magic) {
+    return Format::LittleEndianess64Bit;
+  }
+#else
+#error("Unkown host endianess. Both __LITTLE_ENDIAN__ and __BIG_ENDIAN__ is not defined.")
+#endif
 
   return Format::Unknown;
 }
