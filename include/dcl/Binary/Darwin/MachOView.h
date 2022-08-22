@@ -285,6 +285,8 @@ private:
   public:
     DCL_ALWAYS_INLINE
     Format getMachOFormat() const {
+      // FIXME: fat format is in 64-bit does not mean mach-O is in 64-bit.
+      // format.
       switch (getFatFormat()) {
       case Format::LittleEndianess64Bit: {
         auto fat =
